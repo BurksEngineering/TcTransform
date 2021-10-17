@@ -80,7 +80,7 @@ END_VAR
 // @TEST-RUN
 V1.SetFromComponents(1,2,3);
 V2 := V1;
-V1.Reverse();
+V1 := V1.GetReversed();//tests getter and reverse function
 V3 := V2.GetVector3Sum(V2);
 
 // @TEST-ASSERT

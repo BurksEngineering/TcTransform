@@ -25,8 +25,8 @@ VAR_OUTPUT
 END_VAR
 VAR
 	Data : ARRAY[0..cRows*cCols-1] OF LREAL;
-	RMatrixAccessor : SubMatrixAccessor;
-	Vector3Accessor : SubMatrixAccessor;
+	RMatrixAccessor_ : SubMatrixAccessor;//reinitialize every use (via property) because := copying will destroy the pointer
+	Vector3Accessor_ : SubMatrixAccessor;//reinitialize every use (via property) because := copying will destroy the pointer
 END_VAR
 VAR CONSTANT
 	cRows : UINT := 4;
@@ -39,6 +39,7 @@ END_VAR]]></Declaration>
     <Folder Name="Helpers" Id="{2e3e4b2f-218d-4103-9ddc-c42ed0a85f69}" />
     <Folder Name="Modifiers" Id="{fb7aa61d-da32-44ab-a750-5d4b8ac03e2e}" />
     <Folder Name="Overrides" Id="{efbda92f-8db3-4531-8287-69af8c1f2b52}" />
+    <Folder Name="Properties" Id="{87340584-5a87-03a8-09a5-225630f98cba}" />
     <Folder Name="Setters" Id="{502e76bc-f80f-4f96-8359-35cdec3f73d9}" />
     <Method Name="Clear" Id="{9d4d41b8-c5c9-4da5-bb1b-24d620abcda6}" FolderPath="Overrides\">
       <Declaration><![CDATA[METHOD PUBLIC Clear
@@ -94,6 +95,9 @@ GetReversed.Reverse();]]></ST>
     <Method Name="GetRMatrixComponent" Id="{6ae2920f-e491-4991-baab-846dd25d061c}" FolderPath="Getters\">
       <Declaration><![CDATA[METHOD PUBLIC GetRMatrixComponent : RMatrix
 VAR_INPUT
+END_VAR
+VAR
+	Temp : RMatrix;
 END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[GetRMatrixComponent.CopyFrom(RMatrixAccessor);]]></ST>
@@ -143,20 +147,33 @@ VAR
 END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[Matrix_TransposeSquare(RMatrixAccessor);
-Vector3Accessor.Scale(-1);]]></ST>
+Matrix_Scale(Vector3Accessor,-1);]]></ST>
       </Implementation>
     </Method>
+    <Property Name="RMatrixAccessor" Id="{349ff897-23e1-0157-003a-26eeaeff50fc}" FolderPath="Properties\">
+      <Declaration><![CDATA[//destroy immediately after use because if you ever := copy this FB the pointer within the accessor will still point to the old copy!!!!
+PROPERTY PROTECTED RMatrixAccessor : REFERENCE TO SubMatrixAccessor]]></Declaration>
+      <Get Name="Get" Id="{ed181120-a811-0ef1-26db-04d04eac66ae}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[RMatrixAccessor_.Init(THIS^,0,3,0,3);
+RMatrixAccessor REF= RMatrixAccessor_;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
     <Method Name="SetFromComponents" Id="{286221f7-fde8-44af-bd5b-25df89e6cdd8}" FolderPath="Setters\">
       <Declaration><![CDATA[METHOD PUBLIC SetFromComponents
 VAR_INPUT
 	M_R : REFERENCE TO RMatrix;
 	M_V : REFERENCE TO Vector3;
-END_VAR
-]]></Declaration>
+END_VAR]]></Declaration>
       <Implementation>
-        <ST><![CDATA[FillTrapezoidal(1,0,0);
-RMatrixAccessor.CopyFrom(M_R);
-Vector3Accessor.CopyFrom(M_V);]]></ST>
+        <ST><![CDATA[FillTrapezoidal(1,0,0);//sets bottom row to all zeros, except right corner which is 1
+M_R.CopyTo(RMatrixAccessor);
+M_V.CopyTo(Vector3Accessor);
+]]></ST>
       </Implementation>
     </Method>
     <Method Name="SetI" Id="{73107948-b96d-4741-94cb-7e459f91d4bd}" FolderPath="Overrides\">
@@ -228,6 +245,19 @@ V_To.FillFrom(V4_out);
 ]]></ST>
       </Implementation>
     </Method>
+    <Property Name="Vector3Accessor" Id="{bdd1ab01-dba2-0635-19c5-8048865e9197}" FolderPath="Properties\">
+      <Declaration><![CDATA[//destroy immediately after use because if you ever := copy this FB the pointer within the accessor will still point to the old copy!!!!
+PROPERTY PROTECTED Vector3Accessor : REFERENCE TO SubMatrixAccessor]]></Declaration>
+      <Get Name="Get" Id="{73826667-5a35-09a5-1fd3-b2d7ac14bb82}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[Vector3Accessor_.Init(THIS^,0,3,3,1);
+Vector3Accessor REF= Vector3Accessor_;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
     <LineIds Name="HMatrix">
       <LineId Id="9" Count="0" />
     </LineIds>
@@ -235,7 +265,8 @@ V_To.FillFrom(V4_out);
       <LineId Id="5" Count="0" />
     </LineIds>
     <LineIds Name="HMatrix.FB_init">
-      <LineId Id="7" Count="1" />
+      <LineId Id="15" Count="0" />
+      <LineId Id="8" Count="0" />
     </LineIds>
     <LineIds Name="HMatrix.GetI">
       <LineId Id="5" Count="0" />
@@ -262,11 +293,17 @@ V_To.FillFrom(V4_out);
       <LineId Id="5" Count="0" />
     </LineIds>
     <LineIds Name="HMatrix.Reverse">
-      <LineId Id="24" Count="1" />
+      <LineId Id="24" Count="0" />
+      <LineId Id="30" Count="0" />
+    </LineIds>
+    <LineIds Name="HMatrix.RMatrixAccessor.Get">
+      <LineId Id="2" Count="0" />
+      <LineId Id="5" Count="0" />
     </LineIds>
     <LineIds Name="HMatrix.SetFromComponents">
       <LineId Id="62" Count="0" />
-      <LineId Id="55" Count="1" />
+      <LineId Id="73" Count="1" />
+      <LineId Id="56" Count="0" />
     </LineIds>
     <LineIds Name="HMatrix.SetI">
       <LineId Id="22" Count="1" />
@@ -283,6 +320,10 @@ V_To.FillFrom(V4_out);
     </LineIds>
     <LineIds Name="HMatrix.TransformVector3">
       <LineId Id="20" Count="8" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="HMatrix.Vector3Accessor.Get">
+      <LineId Id="2" Count="0" />
       <LineId Id="5" Count="0" />
     </LineIds>
   </POU>

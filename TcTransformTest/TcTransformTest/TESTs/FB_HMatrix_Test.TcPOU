@@ -13,15 +13,52 @@ END_VAR
       <ST><![CDATA[WhenSetFromComponentsExpectValuesRetained();
 WhenTransformedByIdentityExpectSame();
 WhenVectorTransformedExpectResult();
-WhenTransformedExpectResult();]]></ST>
+WhenMatrixTransformedExpectResult();]]></ST>
     </Implementation>
+    <Method Name="WhenMatrixTransformedExpectResult" Id="{b9562da0-add4-4fb7-aadc-2b99f713b825}">
+      <Declaration><![CDATA[METHOD PRIVATE WhenMatrixTransformedExpectResult
+VAR_INPUT
+END_VAR
+VAR
+	H1 : HMatrix;
+	H2 : HMatrix;
+	H3 : HMatrix;
+	R1 : RMatrix;
+	V1 : Vector3;
+	V2 : Vector3;
+	V3 : Vector3;
+	V4 : Vector3;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[TEST('WhenMatrixTransformedExpectResult');
+
+// @TEST-RUN
+R1.SetFromAngleDim(PI/2,1);
+V1.X := 1;
+H1.SetFromComponents(R1,V1);
+H2 := H1;
+H3 := H1.GetTransformedHMatrix(H2);
+
+V2.SetFromComponents(1,0,0);
+V3 := H3.GetTransformedVector3(V2);
+V4.SetFromComponents(0,0,-1);
+
+// @TEST-ASSERT
+AssertTrue(V3.IsNearlyEqual(V4,1E-6),'Result is not correct');
+
+TEST_FINISHED();]]></ST>
+      </Implementation>
+    </Method>
     <Method Name="WhenSetFromComponentsExpectValuesRetained" Id="{09201a71-edee-42bf-896b-1afd1555a103}">
       <Declaration><![CDATA[METHOD PRIVATE WhenSetFromComponentsExpectValuesRetained
 VAR_INPUT
 END_VAR
 VAR
 	R1 : RMatrix;
+	R2 : RMatrix;
 	V1 : Vector3;
+	V2 : Vector3;
 	H1 : HMatrix;
 	H2 : HMatrix;
 END_VAR
@@ -35,10 +72,11 @@ V1.SetFromComponents(1,2,3);
 H1.SetFromComponents(R1,V1);
 H2 := H1;
 H1.Clear();
-
+R2 := H2.GetRMatrixComponent();
+V2 := H2.GetVector3Component();
 // @TEST-ASSERT
-AssertTrue(R1.IsEqual(H2.GetRMatrixComponent()),'Roration component not correct');
-AssertTrue(V1.IsEqual(H2.GetVector3Component()),'Roration component not correct');
+AssertTrue(R1.IsEqual(R2),'Rotation component not correct');
+AssertTrue(V1.IsEqual(V2),'Vector component not correct');
 
 TEST_FINISHED();]]></ST>
       </Implementation>
@@ -67,41 +105,6 @@ H1.TransformBy(H2);
 
 // @TEST-ASSERT
 AssertTrue(H1.IsEqual(H3),'Result is not the same');
-
-TEST_FINISHED();]]></ST>
-      </Implementation>
-    </Method>
-    <Method Name="WhenTransformedExpectResult" Id="{b9562da0-add4-4fb7-aadc-2b99f713b825}">
-      <Declaration><![CDATA[METHOD PRIVATE WhenTransformedExpectResult
-VAR_INPUT
-END_VAR
-VAR
-	H1 : HMatrix;
-	H2 : HMatrix;
-	H3 : HMatrix;
-	R1 : RMatrix;
-	V1 : Vector3;
-	V2 : Vector3;
-	V3 : Vector3;
-	V4 : Vector3;
-END_VAR
-]]></Declaration>
-      <Implementation>
-        <ST><![CDATA[TEST('WhenVectorTransformedExpectResult');
-
-// @TEST-RUN
-R1.SetFromAngleDim(PI/2,1);
-V1.X := 1;
-H1.SetFromComponents(R1,V1);
-H2 := H1;
-H3 := H1.GetTransformedHMatrix(H2);
-
-V2.SetFromComponents(1,0,0);
-V3 := H3.GetTransformedVector3(V2);
-V4.SetFromComponents(0,0,-1);
-
-// @TEST-ASSERT
-AssertTrue(V3.IsEqual(V4),'Result is not correct');
 
 TEST_FINISHED();]]></ST>
       </Implementation>
@@ -137,8 +140,21 @@ TEST_FINISHED();]]></ST>
       </Implementation>
     </Method>
     <LineIds Name="FB_HMatrix_Test">
-      <LineId Id="9" Count="0" />
-      <LineId Id="17" Count="2" />
+      <LineId Id="27" Count="2" />
+      <LineId Id="19" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_HMatrix_Test.WhenMatrixTransformedExpectResult">
+      <LineId Id="6" Count="3" />
+      <LineId Id="30" Count="1" />
+      <LineId Id="50" Count="0" />
+      <LineId Id="64" Count="0" />
+      <LineId Id="66" Count="0" />
+      <LineId Id="65" Count="0" />
+      <LineId Id="67" Count="1" />
+      <LineId Id="11" Count="1" />
+      <LineId Id="15" Count="0" />
+      <LineId Id="17" Count="0" />
+      <LineId Id="5" Count="0" />
     </LineIds>
     <LineIds Name="FB_HMatrix_Test.WhenSetFromComponentsExpectValuesRetained">
       <LineId Id="5" Count="0" />
@@ -148,9 +164,10 @@ TEST_FINISHED();]]></ST>
       <LineId Id="52" Count="0" />
       <LineId Id="68" Count="1" />
       <LineId Id="71" Count="0" />
+      <LineId Id="83" Count="0" />
       <LineId Id="44" Count="0" />
       <LineId Id="11" Count="0" />
-      <LineId Id="19" Count="0" />
+      <LineId Id="84" Count="0" />
       <LineId Id="70" Count="0" />
       <LineId Id="24" Count="0" />
       <LineId Id="23" Count="0" />
@@ -161,19 +178,6 @@ TEST_FINISHED();]]></ST>
       <LineId Id="9" Count="0" />
       <LineId Id="28" Count="0" />
       <LineId Id="26" Count="0" />
-      <LineId Id="11" Count="1" />
-      <LineId Id="15" Count="0" />
-      <LineId Id="17" Count="0" />
-      <LineId Id="5" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_HMatrix_Test.WhenTransformedExpectResult">
-      <LineId Id="6" Count="3" />
-      <LineId Id="30" Count="1" />
-      <LineId Id="50" Count="0" />
-      <LineId Id="64" Count="0" />
-      <LineId Id="66" Count="0" />
-      <LineId Id="65" Count="0" />
-      <LineId Id="67" Count="1" />
       <LineId Id="11" Count="1" />
       <LineId Id="15" Count="0" />
       <LineId Id="17" Count="0" />

@@ -27,7 +27,7 @@ VAR
 END_VAR
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[TEST('WhenVectorRotatedExpectResult');
+        <ST><![CDATA[TEST('WhenReversedExpectOpposite');
 
 // @TEST-RUN
 R1.SetFromAngleDim(-PI/2,0);

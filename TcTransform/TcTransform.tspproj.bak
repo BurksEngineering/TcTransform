@@ -1,4 +1,8 @@
 <?xml version="1.0"?>
-<TcSmProject>
-	<Project/>
+<TcSmProject xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.beckhoff.com/schemas/2012/07/TcSmProject" TcSmVersion="1.0" TcVersion="3.1.4024.20">
+	<Project ProjectGUID="{9D903842-5698-42AA-8085-48E4B6C38E6A}" Target64Bit="true" ShowHideConfigurations="#x106">
+		<Plc>
+			<Project GUID="{47461694-86B9-47B0-9B24-CE6CE21B1F94}" Name="TcTransform" PrjFilePath="TcTransform\TcTransform.plcproj" TmcFilePath="TcTransform\TcTransform.tmc" ReloadTmc="true" AmsPort="851" FileArchiveSettings="#x000e"/>
+		</Plc>
+	</Project>
 </TcSmProject>
