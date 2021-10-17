@@ -1,0 +1,275 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
+  <POU Name="FB_RMatrix_Test" Id="{29776a3c-62a7-4a52-9285-714d234bd6c2}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_RMatrix_Test EXTENDS FB_TestSuite
+VAR_INPUT
+END_VAR
+VAR_OUTPUT
+END_VAR
+VAR
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[WhenSetFromAngleExpectResult();
+WhenRotatedByIdentityExpectSame();
+WhenRotatedTwiceExpectDouble();
+WhenSetFrom321AnglesExpectResult();
+WhenVectorRotatedExpectResult();
+WhenReversedExpectOpposite();]]></ST>
+    </Implementation>
+    <Method Name="WhenReversedExpectOpposite" Id="{e47eb044-1085-4952-9808-e96e8cc7d353}">
+      <Declaration><![CDATA[METHOD PRIVATE WhenReversedExpectOpposite
+VAR_INPUT
+END_VAR
+VAR
+	R1 : RMatrix;
+	R2 : RMatrix;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[TEST('WhenVectorRotatedExpectResult');
+
+// @TEST-RUN
+R1.SetFromAngleDim(-PI/2,0);
+R2.SetFromAngleDim(PI/2,0);
+R2.Reverse();
+
+// @TEST-ASSERT
+AssertTrue(R2.IsEqual(R1),'Reversed R is not correct');
+
+TEST_FINISHED();]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="WhenRotatedByIdentityExpectSame" Id="{cefa467e-239c-44b5-9555-39c6f4209af6}">
+      <Declaration><![CDATA[METHOD PRIVATE WhenRotatedByIdentityExpectSame
+VAR_INPUT
+END_VAR
+VAR
+	R1 : RMatrix;
+	R2 : RMatrix;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[TEST('WhenRotatedByIdentityExpectSame');
+
+// @TEST-RUN
+R1.RotateBy(R2);
+
+// @TEST-ASSERT
+AssertTrue(R1.IsEqual(R2),'Result is not the same');
+AssertTrue(R2.GetDeterminant() = 1,'Determinant is not 1');
+
+TEST_FINISHED();]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="WhenRotatedTwiceExpectDouble" Id="{da191774-0fa7-4b17-8fa8-29bdac82bc08}">
+      <Declaration><![CDATA[METHOD PRIVATE WhenRotatedTwiceExpectDouble
+VAR_INPUT
+END_VAR
+VAR
+	R1 : RMatrix;
+	R2 : RMatrix;
+	R3 : RMatrix;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[TEST('WhenRotatedTwiceExpectDouble');
+
+// @TEST-RUN
+R1.SetFromAngleDim(PI/2,0);
+R2.RotateBy(R1);
+R2.RotateBy(R1);
+R1.SetFromAngleDim(PI,0);
+R3.RotateBy(R1);
+
+// @TEST-ASSERT
+AssertTrue(R3.IsEqual(R2),'Results are not identical');
+AssertTrue(R2.GetRC(1,1) = -1,'Y Axis not reversed');
+AssertTrue(R2.GetRC(2,2) = -1,'Z Axis not reversed');
+
+TEST_FINISHED();]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="WhenSetFrom321AnglesExpectResult" Id="{41d63c5a-9d95-43f4-a307-47376ec46b64}">
+      <Declaration><![CDATA[METHOD PRIVATE WhenSetFrom321AnglesExpectResult
+VAR_INPUT
+END_VAR
+VAR
+	R1 : RMatrix;
+	R2 : RMatrix;
+	R3 : RMatrix;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[TEST('WhenSetFrom321AnglesExpectResult');
+
+// @TEST-RUN
+R1.SetFrom321EulerAngles(PI/2,PI/2,PI/2);
+R2.SetFromAngleDim(PI/2,0);
+R3.RotateBy(R2);
+R2.SetFromAngleDim(PI/2,1);
+R3.RotateBy(R2);
+R2.SetFromAngleDim(PI/2,2);
+R3.RotateBy(R2);
+
+// @TEST-ASSERT
+AssertTrue(R1.IsEqual(R3),'rotations from two methods are not equal');
+AssertTrue(R1.GetRC(0,2) = 1,'R1 X vector not correct');
+AssertTrue(R1.GetRC(1,1) = 1,'R1 Y vector not correct');
+AssertTrue(R1.GetRC(2,0) = -1,'R1 Z vector not correct');
+AssertTrue(R1.GetDeterminant() = 1,'R1 Determinant is not 1');
+
+AssertTrue(R3.GetRC(0,2) = 1,'R3 X vector not correct');
+AssertTrue(R3.GetRC(1,1) = 1,'R3 Y vector not correct');
+AssertTrue(R3.GetRC(2,0) = -1,'R3 Z vector not correct');
+AssertTrue(R3.GetDeterminant() = 1,'R3 Determinant is not 1');
+
+TEST_FINISHED();]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="WhenSetFromAngleExpectResult" Id="{565445fa-2ab3-4e2a-a94b-9dcc4ab7c985}">
+      <Declaration><![CDATA[METHOD PRIVATE WhenSetFromAngleExpectResult
+VAR_INPUT
+END_VAR
+VAR
+	R1 : RMatrix;
+	R2 : RMatrix;
+	R3 : RMatrix;
+	R4 : RMatrix;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[TEST('WhenSetFromAngleExpectResult');
+
+// @TEST-RUN
+R1.SetFromAngleDim(PI/2,0);
+R2.SetFromAngleDim(PI/2,1);
+R3.SetFromAngleDim(PI/2,2);
+R4 := R3;
+R3.Clear();
+
+// @TEST-ASSERT
+AssertTrue(R1.GetRC(0,0) = 1,'R1 X vector not correct');
+AssertTrue(R1.GetRC(1,2) = -1,'R1 Y vector not correct');
+AssertTrue(R1.GetRC(2,1) = 1,'R1 Z vector not correct');
+AssertTrue(R1.GetDeterminant() = 1,'R1 Determinant is not 1');
+
+AssertTrue(R2.GetRC(0,2) = 1,'R2 X vector not correct');
+AssertTrue(R2.GetRC(1,1) = 1,'R2 Y vector not correct');
+AssertTrue(R2.GetRC(2,0) = -1,'R2 Z vector not correct');
+AssertTrue(R2.GetDeterminant() = 1,'R2 Determinant is not 1');
+
+AssertTrue(R4.GetRC(0,1) = -1,'R4 X vector not correct');
+AssertTrue(R4.GetRC(1,0) = 1,'R4 Y vector not correct');
+AssertTrue(R4.GetRC(2,2) = 1,'R4 Z vector not correct');
+AssertTrue(R4.GetDeterminant() = 1,'R4 Determinant is not 1');
+
+TEST_FINISHED();]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="WhenVectorRotatedExpectResult" Id="{ff1fca85-5a1f-458e-a62f-35a7e11201fe}">
+      <Declaration><![CDATA[METHOD PRIVATE WhenVectorRotatedExpectResult
+VAR_INPUT
+END_VAR
+VAR
+	R1 : RMatrix;
+	V1 : Vector3;
+	V2 : Vector3;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[TEST('WhenVectorRotatedExpectResult');
+
+// @TEST-RUN
+R1.SetFromAngleDim(PI/2,1);
+V1.X := 1;
+V2 := R1.GetRotatedVector3(V1);
+
+// @TEST-ASSERT
+AssertTrue(V2.Z = -1,'Result is not in correct direction');
+AssertTrue(V2.GetVectorMagnitude() = 1,'magnitude is not 1');
+
+TEST_FINISHED();]]></ST>
+      </Implementation>
+    </Method>
+    <LineIds Name="FB_RMatrix_Test">
+      <LineId Id="9" Count="0" />
+      <LineId Id="18" Count="1" />
+      <LineId Id="17" Count="0" />
+      <LineId Id="20" Count="1" />
+    </LineIds>
+    <LineIds Name="FB_RMatrix_Test.WhenReversedExpectOpposite">
+      <LineId Id="6" Count="3" />
+      <LineId Id="31" Count="0" />
+      <LineId Id="41" Count="0" />
+      <LineId Id="11" Count="1" />
+      <LineId Id="15" Count="0" />
+      <LineId Id="17" Count="0" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_RMatrix_Test.WhenRotatedByIdentityExpectSame">
+      <LineId Id="6" Count="3" />
+      <LineId Id="11" Count="1" />
+      <LineId Id="15" Count="2" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_RMatrix_Test.WhenRotatedTwiceExpectDouble">
+      <LineId Id="6" Count="3" />
+      <LineId Id="30" Count="3" />
+      <LineId Id="11" Count="1" />
+      <LineId Id="15" Count="1" />
+      <LineId Id="34" Count="0" />
+      <LineId Id="17" Count="0" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_RMatrix_Test.WhenSetFrom321AnglesExpectResult">
+      <LineId Id="5" Count="0" />
+      <LineId Id="7" Count="0" />
+      <LineId Id="6" Count="0" />
+      <LineId Id="21" Count="0" />
+      <LineId Id="18" Count="0" />
+      <LineId Id="54" Count="0" />
+      <LineId Id="56" Count="0" />
+      <LineId Id="55" Count="0" />
+      <LineId Id="58" Count="0" />
+      <LineId Id="57" Count="0" />
+      <LineId Id="44" Count="0" />
+      <LineId Id="11" Count="0" />
+      <LineId Id="59" Count="0" />
+      <LineId Id="19" Count="0" />
+      <LineId Id="41" Count="1" />
+      <LineId Id="52" Count="0" />
+      <LineId Id="61" Count="3" />
+      <LineId Id="60" Count="0" />
+      <LineId Id="24" Count="0" />
+      <LineId Id="23" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_RMatrix_Test.WhenSetFromAngleExpectResult">
+      <LineId Id="5" Count="0" />
+      <LineId Id="7" Count="0" />
+      <LineId Id="6" Count="0" />
+      <LineId Id="21" Count="0" />
+      <LineId Id="18" Count="0" />
+      <LineId Id="52" Count="0" />
+      <LineId Id="59" Count="1" />
+      <LineId Id="44" Count="0" />
+      <LineId Id="11" Count="0" />
+      <LineId Id="19" Count="0" />
+      <LineId Id="41" Count="1" />
+      <LineId Id="46" Count="0" />
+      <LineId Id="50" Count="0" />
+      <LineId Id="47" Count="2" />
+      <LineId Id="53" Count="4" />
+      <LineId Id="45" Count="0" />
+      <LineId Id="24" Count="0" />
+      <LineId Id="23" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_RMatrix_Test.WhenVectorRotatedExpectResult">
+      <LineId Id="6" Count="3" />
+      <LineId Id="30" Count="1" />
+      <LineId Id="11" Count="1" />
+      <LineId Id="15" Count="2" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

@@ -1,0 +1,179 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
+  <POU Name="FB_Vector3_Test" Id="{13478125-18c9-4a6b-bc64-7376bfcd3840}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_Vector3_Test EXTENDS FB_TestSuite
+VAR_INPUT
+END_VAR
+VAR_OUTPUT
+END_VAR
+VAR
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[WhenSetExpectValuesRetained();
+WhenReversedExpectValuesReversed();
+WhenCrossedExpectVectorOrthogonal();
+WhenDottedExpectResult();]]></ST>
+    </Implementation>
+    <Method Name="WhenCrossedExpectVectorOrthogonal" Id="{77217c58-9dca-41bd-bf6e-dd652b36e1c1}">
+      <Declaration><![CDATA[METHOD PRIVATE WhenCrossedExpectVectorOrthogonal
+VAR_INPUT
+END_VAR
+VAR
+	V1 : Vector3;
+	V2 : Vector3;
+	V3 : Vector3;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[TEST('WhenCrossedExpectVectorOrthogonal');
+
+// @TEST-RUN
+V1.SetFromComponents(1,0,0);
+V2.SetFromComponents(0,1,0);
+V3 := V1.GetVector3CrossProduct(V2);
+
+// @TEST-ASSERT
+AssertTrue(V3.Z = 1,'cross product did not work');
+
+TEST_FINISHED();]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="WhenDottedExpectResult" Id="{9668ad9e-694a-4131-b760-7aa5f1e21bae}">
+      <Declaration><![CDATA[METHOD PRIVATE WhenDottedExpectResult
+VAR_INPUT
+END_VAR
+VAR
+	V1 : Vector3;
+	V2 : Vector3;
+	V3 : Vector3;
+	Dot : LREAL;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[TEST('WhenDottedExpectResult');
+
+// @TEST-RUN
+V1.SetFromComponents(1,2,3);
+V2 := V1;
+Dot := V1.GetVector3DotProduct(V2);
+
+// @TEST-ASSERT
+AssertTrue(Dot = 14,'dot product did not work');
+
+TEST_FINISHED();]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="WhenReversedExpectValuesReversed" Id="{3f55f92d-d03c-47e6-ab90-b6404c9d174c}">
+      <Declaration><![CDATA[METHOD PRIVATE WhenReversedExpectValuesReversed
+VAR_INPUT
+END_VAR
+VAR
+	V1 : Vector3;
+	V2 : Vector3;
+	V3 : Vector3;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[TEST('WhenReversedExpectValuesReversed');
+
+// @TEST-RUN
+V1.SetFromComponents(1,2,3);
+V2 := V1;
+V1.Reverse();
+V3 := V2.GetVector3Sum(V2);
+
+// @TEST-ASSERT
+AssertTrue(V2.X + V1.X = 0,'Reversal did not work');
+AssertTrue(V3.X = 2,'vector sum did not work');
+
+TEST_FINISHED();]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="WhenSetExpectValuesRetained" Id="{bc97fc39-a708-467e-8709-58aa23a1fcd5}">
+      <Declaration><![CDATA[METHOD PRIVATE WhenSetExpectValuesRetained
+VAR_INPUT
+END_VAR
+VAR
+	V1 : Vector3;
+	V2 : Vector3;
+	V3 : DynamicMatrix;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[TEST('WhenSetExpectValuesRetained');
+
+// @TEST-RUN
+V1.SetFromComponents(1,2,3);
+V2 := V1;
+V1.Clear();
+V3.InitVector(3,1,1);
+
+// @TEST-ASSERT
+AssertTrue(V2.z = 3,'Component access not retained');
+AssertTrue(V2.IsEqual(V3),'vector did not copy');
+
+TEST_FINISHED();]]></ST>
+      </Implementation>
+    </Method>
+    <LineIds Name="FB_Vector3_Test">
+      <LineId Id="9" Count="3" />
+    </LineIds>
+    <LineIds Name="FB_Vector3_Test.WhenCrossedExpectVectorOrthogonal">
+      <LineId Id="5" Count="0" />
+      <LineId Id="7" Count="0" />
+      <LineId Id="6" Count="0" />
+      <LineId Id="10" Count="0" />
+      <LineId Id="17" Count="0" />
+      <LineId Id="21" Count="0" />
+      <LineId Id="18" Count="0" />
+      <LineId Id="11" Count="0" />
+      <LineId Id="19" Count="0" />
+      <LineId Id="24" Count="0" />
+      <LineId Id="23" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_Vector3_Test.WhenDottedExpectResult">
+      <LineId Id="5" Count="0" />
+      <LineId Id="7" Count="0" />
+      <LineId Id="6" Count="0" />
+      <LineId Id="10" Count="0" />
+      <LineId Id="17" Count="0" />
+      <LineId Id="21" Count="0" />
+      <LineId Id="18" Count="0" />
+      <LineId Id="11" Count="0" />
+      <LineId Id="19" Count="0" />
+      <LineId Id="24" Count="0" />
+      <LineId Id="23" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_Vector3_Test.WhenReversedExpectValuesReversed">
+      <LineId Id="5" Count="0" />
+      <LineId Id="7" Count="0" />
+      <LineId Id="6" Count="0" />
+      <LineId Id="10" Count="0" />
+      <LineId Id="17" Count="0" />
+      <LineId Id="35" Count="0" />
+      <LineId Id="21" Count="0" />
+      <LineId Id="18" Count="0" />
+      <LineId Id="11" Count="0" />
+      <LineId Id="19" Count="0" />
+      <LineId Id="22" Count="0" />
+      <LineId Id="24" Count="0" />
+      <LineId Id="23" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_Vector3_Test.WhenSetExpectValuesRetained">
+      <LineId Id="5" Count="0" />
+      <LineId Id="7" Count="0" />
+      <LineId Id="6" Count="0" />
+      <LineId Id="10" Count="0" />
+      <LineId Id="17" Count="0" />
+      <LineId Id="33" Count="0" />
+      <LineId Id="21" Count="0" />
+      <LineId Id="18" Count="0" />
+      <LineId Id="11" Count="0" />
+      <LineId Id="19" Count="0" />
+      <LineId Id="22" Count="0" />
+      <LineId Id="24" Count="0" />
+      <LineId Id="23" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

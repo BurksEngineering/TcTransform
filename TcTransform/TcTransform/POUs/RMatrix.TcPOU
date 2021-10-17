@@ -1,0 +1,297 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
+  <POU Name="RMatrix" Id="{9bc066e0-5060-4767-b54e-f3a680b769d5}" SpecialFunc="None">
+    <Declaration><![CDATA[(*
+RMatrix : 3D Rotation Matrix
+======================
+
+Overview
+----------------------
+
+This class represents a 3x3 matrix used to represent a rotation.
+
+See: `https://en.wikipedia.org/wiki/Rotation_matrix`__
+
+You can think of the RMatrix as representing the orientation of  *child* coordinate system inside a *parent* coordinate system. 
+Each column vector of the RMatrix is essentially a unit vector (X, Y, or Z) of the child coordinate system projected into the parent coordinate system.
+Premultiplication with this matrix transforms vectors and other rotations out of the child coordinate system and into the parent coordinate system. 
+Reversing the RMatrix simply reverses the roles (parent/child) of the coordinate system and allows transformations in the other direction.
+*)
+{attribute 'reflection'}
+FUNCTION_BLOCK RMatrix EXTENDS StaticMatrix
+VAR_INPUT
+END_VAR
+VAR_OUTPUT
+END_VAR
+VAR
+	Data : ARRAY[0..cRows*cCols-1] OF LREAL;
+END_VAR
+VAR CONSTANT
+	cRows : UINT := 3;
+	cCols : UINT := 3;
+END_VAR]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[]]></ST>
+    </Implementation>
+    <Folder Name="Getters" Id="{80c3ef77-8bb8-42f3-a586-d0dc3a38b4a1}" />
+    <Folder Name="Helpers" Id="{ccf67a90-57bb-4b16-8e9c-6f84260aaabf}" />
+    <Folder Name="Modifiers" Id="{0f6c6206-349d-4c60-ae1d-9d55fe206d70}" />
+    <Folder Name="Overrides" Id="{af5c3a94-d6f7-4c2c-800b-35fdadbd3f54}" />
+    <Folder Name="Setters" Id="{f7cadddc-161a-48bc-a94b-177606fba9de}" />
+    <Method Name="Clear" Id="{027f050f-4f77-4aeb-a0e0-39072a4e57ce}" FolderPath="Overrides\">
+      <Declaration><![CDATA[METHOD PUBLIC Clear
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[FillTrapezoidal(1,0,0);]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="FB_init" Id="{26ea4d11-e89f-43a1-af7e-c6b796c00b93}" FolderPath="Overrides\">
+      <Declaration><![CDATA[METHOD FB_init : BOOL
+VAR_INPUT
+	bInitRetains : BOOL; // if TRUE, the retain variables are initialized (warm start / cold start)
+	bInCopyCode : BOOL;  // if TRUE, the instance afterwards gets moved into the copy code (online change)
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[Init_(cRows,cCols);
+Clear();]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="GetI" Id="{015a9ab6-358d-413c-971b-ae0068470b6d}" FolderPath="Overrides\">
+      <Declaration><![CDATA[//Gets the value of the element in this matrix at the supplied location as if the elements were stored in a 1D row-major array
+//:Prerequisites:
+// - I < Rows*Cols
+// - Matrix is not empty
+//If the supplied index is out of bounds the value 0 is returned and a warning is generated in the Error List
+METHOD PUBLIC GetI : LREAL//The value of the element at the specified index, or 0 if an invalid index is supplied
+VAR_INPUT
+	I : UINT;//The index of the element which should have its value returned
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF I >= Length THEN
+	GetI := 0.0;
+	LogWarning('%s: Attempted I access of out-of-bounds Matrix data');
+ELSE
+	GetI := Data[I];
+END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="GetReversed" Id="{92a4b7bf-86be-4bea-af13-ea62374ec0d7}" FolderPath="Getters\">
+      <Declaration><![CDATA[METHOD PUBLIC GetReversed : RMatrix
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[GetReversed := THIS^;
+GetReversed.Reverse();]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="GetRotatedRMatrix" Id="{af9e57ab-1242-4d2a-bea1-322f456421a1}" FolderPath="Getters\">
+      <Declaration><![CDATA[METHOD PUBLIC GetRotatedRMatrix : RMatrix;
+VAR_INPUT
+	M_R : REFERENCE TO RMatrix;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[RotateRMatrix(M_R,GetRotatedRMatrix);]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="GetRotatedVector3" Id="{98fbe1a3-cb09-4e8d-af7b-b0032dd8f73e}" FolderPath="Getters\">
+      <Declaration><![CDATA[METHOD PUBLIC GetRotatedVector3 : Vector3
+VAR_INPUT
+	M_V : Vector3;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[RotateVector3(M_V,GetRotatedVector3);]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="Reverse" Id="{c0867d18-4c42-4215-9a97-1688df15e7cb}" FolderPath="Modifiers\">
+      <Declaration><![CDATA[METHOD PUBLIC Reverse
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[Matrix_TransposeSquare(THIS^);]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="RotateBy" Id="{c7db5993-9ae0-46f4-b208-76cc11903f65}" FolderPath="Modifiers\">
+      <Declaration><![CDATA[//Equivalent to Matrix Operation 'THIS := M_R * THIS'
+METHOD PUBLIC RotateBy
+VAR_INPUT
+	M_R : REFERENCE TO RMatrix;
+END_VAR
+VAR
+	Temp : RMatrix := THIS^;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[Matrix_Product(M_R,Temp,THIS^);]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="RotateRMatrix" Id="{94514cca-3495-4305-a7b1-caebc38d65fe}" FolderPath="Helpers\">
+      <Declaration><![CDATA[METHOD PUBLIC RotateRMatrix
+VAR_INPUT
+	R_From : REFERENCE TO RMatrix;
+	R_To : REFERENCE TO RMatrix;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[Matrix_Product(THIS^,R_From,R_To);]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="RotateVector3" Id="{a1d2c87d-b7d5-4de7-bf30-62e9d26671c1}" FolderPath="Helpers\">
+      <Declaration><![CDATA[METHOD PUBLIC RotateVector3
+VAR_INPUT
+	V_From : REFERENCE TO Vector3;
+	V_To : REFERENCE TO Vector3;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[Matrix_Product(THIS^,V_From,V_To);]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="SetFrom321EulerAngles" Id="{3da0088e-1aca-45f5-91fe-ebddd7b158c9}" FolderPath="Setters\">
+      <Declaration><![CDATA[METHOD PUBLIC SetFrom321EulerAngles
+VAR_INPUT
+	X : LREAL;//radians
+	Y : LREAL;//radians
+	Z : LREAL;//radians
+END_VAR
+VAR
+	Angles : ARRAY [0..2] OF LREAL := [Z, Y, X];
+	Dims : ARRAY [0..2] OF INT := [2, 1, 0];
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[SetFromEulerAngles(Angles,Dims);]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="SetFromAngleDim" Id="{a4f2a576-ecea-4d2e-ba8e-23d82bdf48d3}" FolderPath="Setters\">
+      <Declaration><![CDATA[METHOD PUBLIC SetFromAngleDim
+VAR_INPUT
+	Angle : LREAL;//radians
+	Dim : UINT;//0-2
+END_VAR
+VAR
+	SM : ShrunkMatrixAccessor;
+	Sign : LREAL;
+	
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[FillTrapezoidal(1,0,0);
+Sign := INT_TO_LREAL(((UINT_TO_INT(Dim) MOD 2)*2)-1);
+SM := GetShrunkMatrixAccessor(Dim,Dim);
+SM.FillTrapezoidal(COS(Angle),Sign*SIN(Angle),-1*Sign*SIN(Angle));
+
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="SetFromEulerAngles" Id="{1d13de46-a9bc-418e-b26e-cffe204950b3}" FolderPath="Setters\">
+      <Declaration><![CDATA[METHOD PUBLIC SetFromEulerAngles
+VAR_INPUT
+END_VAR
+VAR_IN_OUT
+	Angles : ARRAY [*] OF LREAL;
+	Dims : ARRAY [*] OF INT;
+END_VAR
+VAR
+	I : DINT;
+	N : DINT;
+	RTemp : RMatrix;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[N := MIN(UPPER_BOUND(Angles,1) - LOWER_BOUND(Angles,1),UPPER_BOUND(Dims,1) - LOWER_BOUND(Dims,1))+1;
+FillTrapezoidal(1,0,0);
+FOR I := N-1 TO 0 BY -1 DO
+	RTemp.SetFromAngleDim(Angles[LOWER_BOUND(Angles,1)+I],Dims[LOWER_BOUND(Dims,1)+I]);
+	RotateBy(RTemp);
+END_FOR]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="SetI" Id="{01d3b92f-75e1-4b02-848a-872990a093d9}" FolderPath="Overrides\">
+      <Declaration><![CDATA[//Sets the element specified by the supplied index to the suppleid value, assuming the data of the matrix is stored in a 1D row-major array
+//:Prerequisites: - I < Rows*Cols
+METHOD PUBLIC SetI : BOOL//TRUE if the specified index is valid and the data is copied. FLASE otherwise
+VAR_INPUT
+	I : UINT;//The index specifying which element should be modified
+	Val : LREAL;//The value copied to the corresponding element
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF I >= Length THEN
+	SetI := FALSE;
+	LogWarning('%s: Attempt to set data using I access when I is out of bounds');
+ELSE
+	SetI := TRUE;
+	Data[I] := Val;
+END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <LineIds Name="RMatrix">
+      <LineId Id="9" Count="0" />
+    </LineIds>
+    <LineIds Name="RMatrix.Clear">
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="RMatrix.FB_init">
+      <LineId Id="7" Count="1" />
+    </LineIds>
+    <LineIds Name="RMatrix.GetI">
+      <LineId Id="5" Count="0" />
+      <LineId Id="16" Count="0" />
+      <LineId Id="19" Count="0" />
+      <LineId Id="8" Count="0" />
+      <LineId Id="17" Count="0" />
+      <LineId Id="7" Count="0" />
+    </LineIds>
+    <LineIds Name="RMatrix.GetReversed">
+      <LineId Id="5" Count="1" />
+    </LineIds>
+    <LineIds Name="RMatrix.GetRotatedRMatrix">
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="RMatrix.GetRotatedVector3">
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="RMatrix.Reverse">
+      <LineId Id="14" Count="0" />
+    </LineIds>
+    <LineIds Name="RMatrix.RotateBy">
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="RMatrix.RotateRMatrix">
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="RMatrix.RotateVector3">
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="RMatrix.SetFrom321EulerAngles">
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="RMatrix.SetFromAngleDim">
+      <LineId Id="37" Count="0" />
+      <LineId Id="26" Count="0" />
+      <LineId Id="23" Count="0" />
+      <LineId Id="25" Count="0" />
+      <LineId Id="16" Count="0" />
+      <LineId Id="15" Count="0" />
+    </LineIds>
+    <LineIds Name="RMatrix.SetFromEulerAngles">
+      <LineId Id="5" Count="0" />
+      <LineId Id="16" Count="0" />
+      <LineId Id="13" Count="1" />
+      <LineId Id="18" Count="0" />
+      <LineId Id="15" Count="0" />
+    </LineIds>
+    <LineIds Name="RMatrix.SetI">
+      <LineId Id="22" Count="1" />
+      <LineId Id="26" Count="0" />
+      <LineId Id="8" Count="1" />
+      <LineId Id="24" Count="0" />
+      <LineId Id="7" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

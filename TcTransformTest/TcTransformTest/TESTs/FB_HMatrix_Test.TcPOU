@@ -1,0 +1,193 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
+  <POU Name="FB_HMatrix_Test" Id="{8509ff9f-e6f7-466d-977b-28b12283ac53}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_HMatrix_Test EXTENDS FB_TestSuite
+VAR_INPUT
+END_VAR
+VAR_OUTPUT
+END_VAR
+VAR
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[WhenSetFromComponentsExpectValuesRetained();
+WhenTransformedByIdentityExpectSame();
+WhenVectorTransformedExpectResult();
+WhenTransformedExpectResult();]]></ST>
+    </Implementation>
+    <Method Name="WhenSetFromComponentsExpectValuesRetained" Id="{09201a71-edee-42bf-896b-1afd1555a103}">
+      <Declaration><![CDATA[METHOD PRIVATE WhenSetFromComponentsExpectValuesRetained
+VAR_INPUT
+END_VAR
+VAR
+	R1 : RMatrix;
+	V1 : Vector3;
+	H1 : HMatrix;
+	H2 : HMatrix;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[TEST('WhenSetFromComponentsExpectValuesRetained');
+
+// @TEST-RUN
+R1.SetFromAngleDim(PI/2,0);
+V1.SetFromComponents(1,2,3);
+H1.SetFromComponents(R1,V1);
+H2 := H1;
+H1.Clear();
+
+// @TEST-ASSERT
+AssertTrue(R1.IsEqual(H2.GetRMatrixComponent()),'Roration component not correct');
+AssertTrue(V1.IsEqual(H2.GetVector3Component()),'Roration component not correct');
+
+TEST_FINISHED();]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="WhenTransformedByIdentityExpectSame" Id="{64ecb900-bfd6-4ae6-ab9e-4e9de7d0e86d}">
+      <Declaration><![CDATA[METHOD PRIVATE WhenTransformedByIdentityExpectSame
+VAR_INPUT
+END_VAR
+VAR
+	H1 : HMatrix;
+	H2 : HMatrix;
+	H3 : HMatrix;
+	R1 : RMatrix;
+	V1 : Vector3;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[TEST('WhenTransformedByIdentityExpectSame');
+
+// @TEST-RUN
+R1.SetFromAngleDim(PI/2,0);
+V1.SetFromComponents(1,2,3);
+H1.SetFromComponents(R1,V1);
+H3 := H1;
+H1.TransformBy(H2);
+
+// @TEST-ASSERT
+AssertTrue(H1.IsEqual(H3),'Result is not the same');
+
+TEST_FINISHED();]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="WhenTransformedExpectResult" Id="{b9562da0-add4-4fb7-aadc-2b99f713b825}">
+      <Declaration><![CDATA[METHOD PRIVATE WhenTransformedExpectResult
+VAR_INPUT
+END_VAR
+VAR
+	H1 : HMatrix;
+	H2 : HMatrix;
+	H3 : HMatrix;
+	R1 : RMatrix;
+	V1 : Vector3;
+	V2 : Vector3;
+	V3 : Vector3;
+	V4 : Vector3;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[TEST('WhenVectorTransformedExpectResult');
+
+// @TEST-RUN
+R1.SetFromAngleDim(PI/2,1);
+V1.X := 1;
+H1.SetFromComponents(R1,V1);
+H2 := H1;
+H3 := H1.GetTransformedHMatrix(H2);
+
+V2.SetFromComponents(1,0,0);
+V3 := H3.GetTransformedVector3(V2);
+V4.SetFromComponents(0,0,-1);
+
+// @TEST-ASSERT
+AssertTrue(V3.IsEqual(V4),'Result is not correct');
+
+TEST_FINISHED();]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="WhenVectorTransformedExpectResult" Id="{0b68112b-2ff3-4256-9695-dc18fbdf33ab}">
+      <Declaration><![CDATA[METHOD PRIVATE WhenVectorTransformedExpectResult
+VAR_INPUT
+END_VAR
+VAR
+	H1 : HMatrix;
+	R1 : RMatrix;
+	V1 : Vector3;
+	V2 : Vector3;
+	V3 : Vector3;
+	V4 : Vector3;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[TEST('WhenVectorTransformedExpectResult');
+
+// @TEST-RUN
+R1.SetFromAngleDim(PI/2,1);
+V1.X := 1;
+H1.SetFromComponents(R1,V1);
+V2.X := 1;
+V3 := H1.GetTransformedVector3(V2);
+V4.SetFromComponents(1,0,-1);
+
+// @TEST-ASSERT
+AssertTrue(V3.IsEqual(V4),'Result is not correct');
+
+TEST_FINISHED();]]></ST>
+      </Implementation>
+    </Method>
+    <LineIds Name="FB_HMatrix_Test">
+      <LineId Id="9" Count="0" />
+      <LineId Id="17" Count="2" />
+    </LineIds>
+    <LineIds Name="FB_HMatrix_Test.WhenSetFromComponentsExpectValuesRetained">
+      <LineId Id="5" Count="0" />
+      <LineId Id="7" Count="0" />
+      <LineId Id="6" Count="0" />
+      <LineId Id="21" Count="0" />
+      <LineId Id="52" Count="0" />
+      <LineId Id="68" Count="1" />
+      <LineId Id="71" Count="0" />
+      <LineId Id="44" Count="0" />
+      <LineId Id="11" Count="0" />
+      <LineId Id="19" Count="0" />
+      <LineId Id="70" Count="0" />
+      <LineId Id="24" Count="0" />
+      <LineId Id="23" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_HMatrix_Test.WhenTransformedByIdentityExpectSame">
+      <LineId Id="6" Count="2" />
+      <LineId Id="24" Count="1" />
+      <LineId Id="9" Count="0" />
+      <LineId Id="28" Count="0" />
+      <LineId Id="26" Count="0" />
+      <LineId Id="11" Count="1" />
+      <LineId Id="15" Count="0" />
+      <LineId Id="17" Count="0" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_HMatrix_Test.WhenTransformedExpectResult">
+      <LineId Id="6" Count="3" />
+      <LineId Id="30" Count="1" />
+      <LineId Id="50" Count="0" />
+      <LineId Id="64" Count="0" />
+      <LineId Id="66" Count="0" />
+      <LineId Id="65" Count="0" />
+      <LineId Id="67" Count="1" />
+      <LineId Id="11" Count="1" />
+      <LineId Id="15" Count="0" />
+      <LineId Id="17" Count="0" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_HMatrix_Test.WhenVectorTransformedExpectResult">
+      <LineId Id="6" Count="3" />
+      <LineId Id="30" Count="1" />
+      <LineId Id="47" Count="1" />
+      <LineId Id="50" Count="0" />
+      <LineId Id="11" Count="1" />
+      <LineId Id="15" Count="0" />
+      <LineId Id="17" Count="0" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

@@ -1,0 +1,289 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
+  <POU Name="HMatrix" Id="{71948d77-df63-4185-af01-854e3d47b0f2}" SpecialFunc="None">
+    <Declaration><![CDATA[(*
+HMatrix : 3D Homogeneous Transformation Matrix
+======================
+
+Overview
+----------------------
+
+This class represents a 4x4 matrix used to represent the relative position and orientation of two coordinate system.
+
+See: `http://planning.cs.uiuc.edu/node111.html`__
+
+You can think of the HMatrix as representing the position and orientation of  *child* coordinate system inside a *parent* coordinate system.\
+The included 3x3 matrix in the top left of the HMatrix is simply an RMatrix describing the relative angle, while the included 3x1 column vector in the top right of the HMatrix is simply a Vector3 describing the relative position.
+Premultiplication with this matrix transforms vectors and coordiante systems out of the child coordinate system and into the parent coordinate system. 
+Reversing the HMatrix simply reverses the roles (parent/child) of the coordinate system and allows transformations in the other direction.
+*)
+{attribute 'reflection'}
+FUNCTION_BLOCK HMatrix EXTENDS StaticMatrix
+VAR_INPUT
+END_VAR
+VAR_OUTPUT
+END_VAR
+VAR
+	Data : ARRAY[0..cRows*cCols-1] OF LREAL;
+	RMatrixAccessor : SubMatrixAccessor;
+	Vector3Accessor : SubMatrixAccessor;
+END_VAR
+VAR CONSTANT
+	cRows : UINT := 4;
+	cCols : UINT := 4;
+END_VAR]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[]]></ST>
+    </Implementation>
+    <Folder Name="Getters" Id="{7cba5dae-3736-4574-923c-a33060549dbd}" />
+    <Folder Name="Helpers" Id="{2e3e4b2f-218d-4103-9ddc-c42ed0a85f69}" />
+    <Folder Name="Modifiers" Id="{fb7aa61d-da32-44ab-a750-5d4b8ac03e2e}" />
+    <Folder Name="Overrides" Id="{efbda92f-8db3-4531-8287-69af8c1f2b52}" />
+    <Folder Name="Setters" Id="{502e76bc-f80f-4f96-8359-35cdec3f73d9}" />
+    <Method Name="Clear" Id="{9d4d41b8-c5c9-4da5-bb1b-24d620abcda6}" FolderPath="Overrides\">
+      <Declaration><![CDATA[METHOD PUBLIC Clear
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[FillTrapezoidal(1,0,0);]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="FB_init" Id="{abbd14d9-a523-4e8b-9be3-0739a8834c12}" FolderPath="Overrides\">
+      <Declaration><![CDATA[METHOD FB_init : BOOL
+VAR_INPUT
+	bInitRetains : BOOL; // if TRUE, the retain variables are initialized (warm start / cold start)
+	bInCopyCode : BOOL;  // if TRUE, the instance afterwards gets moved into the copy code (online change)
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[Init_(cRows,cCols);
+Clear();]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="GetI" Id="{1b9c3781-9f28-43c2-9149-9825d94a73a7}" FolderPath="Overrides\">
+      <Declaration><![CDATA[//Gets the value of the element in this matrix at the supplied location as if the elements were stored in a 1D row-major array
+//:Prerequisites:
+// - I < Rows*Cols
+// - Matrix is not empty
+//If the supplied index is out of bounds the value 0 is returned and a warning is generated in the Error List
+METHOD PUBLIC GetI : LREAL//The value of the element at the specified index, or 0 if an invalid index is supplied
+VAR_INPUT
+	I : UINT;//The index of the element which should have its value returned
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF I >= Length THEN
+	GetI := 0.0;
+	LogWarning('%s: Attempted I access of out-of-bounds Matrix data');
+ELSE
+	GetI := Data[I];
+END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="GetReversed" Id="{8ab6e0a2-af89-46ff-a7e5-90d72c937570}" FolderPath="Getters\">
+      <Declaration><![CDATA[METHOD PUBLIC GetReversed : HMatrix
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[GetReversed := THIS^;
+GetReversed.Reverse();]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="GetRMatrixComponent" Id="{6ae2920f-e491-4991-baab-846dd25d061c}" FolderPath="Getters\">
+      <Declaration><![CDATA[METHOD PUBLIC GetRMatrixComponent : RMatrix
+VAR_INPUT
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[GetRMatrixComponent.CopyFrom(RMatrixAccessor);]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="GetTransformedHMatrix" Id="{4271c121-57f0-4c85-aab4-d2a88480e9c7}" FolderPath="Getters\">
+      <Declaration><![CDATA[METHOD PUBLIC GetTransformedHMatrix : HMatrix
+VAR_INPUT
+	M_H : HMatrix;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[TransformHMatrix(M_H,GetTransformedHMatrix);]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="GetTransformedVector3" Id="{41edd51c-b561-4f68-b781-caf20c6cbf67}" FolderPath="Getters\">
+      <Declaration><![CDATA[METHOD PUBLIC GetTransformedVector3 : Vector3
+VAR_INPUT
+	M_V : Vector3;
+END_VAR
+VAR
+	V4_in : ExternalStaticMatrix;
+	V4_Data_in : ARRAY[0..3] OF LREAL;
+	
+	V4_out : ExternalStaticMatrix;
+	V4_Data_out : ARRAY[0..3] OF LREAL;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[TransformVector3(M_V,GetTransformedVector3);
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="GetVector3Component" Id="{52f33d83-4806-4815-9e3c-f4e6b7888565}" FolderPath="Getters\">
+      <Declaration><![CDATA[METHOD PUBLIC GetVector3Component : Vector3
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[GetVector3Component.CopyFrom(Vector3Accessor);]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="Reverse" Id="{920d93d9-920c-4525-8764-79c11e853ff6}" FolderPath="Modifiers\">
+      <Declaration><![CDATA[METHOD PUBLIC Reverse
+VAR_INPUT
+END_VAR
+VAR
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[Matrix_TransposeSquare(RMatrixAccessor);
+Vector3Accessor.Scale(-1);]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="SetFromComponents" Id="{286221f7-fde8-44af-bd5b-25df89e6cdd8}" FolderPath="Setters\">
+      <Declaration><![CDATA[METHOD PUBLIC SetFromComponents
+VAR_INPUT
+	M_R : REFERENCE TO RMatrix;
+	M_V : REFERENCE TO Vector3;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[FillTrapezoidal(1,0,0);
+RMatrixAccessor.CopyFrom(M_R);
+Vector3Accessor.CopyFrom(M_V);]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="SetI" Id="{73107948-b96d-4741-94cb-7e459f91d4bd}" FolderPath="Overrides\">
+      <Declaration><![CDATA[//Sets the element specified by the supplied index to the suppleid value, assuming the data of the matrix is stored in a 1D row-major array
+//:Prerequisites: - I < Rows*Cols
+METHOD PUBLIC SetI : BOOL//TRUE if the specified index is valid and the data is copied. FLASE otherwise
+VAR_INPUT
+	I : UINT;//The index specifying which element should be modified
+	Val : LREAL;//The value copied to the corresponding element
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF I >= Length THEN
+	SetI := FALSE;
+	LogWarning('%s: Attempt to set data using I access when I is out of bounds');
+ELSE
+	SetI := TRUE;
+	Data[I] := Val;
+END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="TransformBy" Id="{3dfe8237-720a-48b0-903b-646d13847b0c}" FolderPath="Modifiers\">
+      <Declaration><![CDATA[//Equivalent to Matrix Operation 'THIS := M_H * THIS'
+METHOD PUBLIC TransformBy
+VAR_INPUT
+	M_H : REFERENCE TO HMatrix;
+END_VAR
+VAR
+	Temp : HMatrix := THIS^;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[M_H.TransformHMatrix(Temp,THIS^);]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="TransformHMatrix" Id="{a23c2f95-8204-479c-b1b3-1469f769c24d}" FolderPath="Helpers\">
+      <Declaration><![CDATA[METHOD PUBLIC TransformHMatrix
+VAR_INPUT
+	H_From : REFERENCE TO HMatrix;
+	H_To : REFERENCE TO HMatrix;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[Matrix_Product(THIS^,H_From,H_To);]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="TransformVector3" Id="{4e2cbfad-e142-4a26-b337-1b56f8008991}" FolderPath="Helpers\">
+      <Declaration><![CDATA[METHOD PUBLIC TransformVector3
+VAR_INPUT
+	V_From : REFERENCE TO Vector3;
+	V_To : REFERENCE TO Vector3;
+END_VAR
+VAR
+	V4_in : ExternalStaticMatrix;
+	V4_Data_in : ARRAY[0..3] OF LREAL;
+	
+	V4_out : ExternalStaticMatrix;
+	V4_Data_out : ARRAY[0..3] OF LREAL;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[V4_in.Init(ADR(V4_Data_in),4,1);
+V4_in.FillFrom(V_From);
+V4_in.SetI(3,1);
+
+V4_out.Init(ADR(V4_Data_out),4,1);
+
+Matrix_Product(THIS^,V4_in,V4_out);
+
+V_To.FillFrom(V4_out);
+]]></ST>
+      </Implementation>
+    </Method>
+    <LineIds Name="HMatrix">
+      <LineId Id="9" Count="0" />
+    </LineIds>
+    <LineIds Name="HMatrix.Clear">
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="HMatrix.FB_init">
+      <LineId Id="7" Count="1" />
+    </LineIds>
+    <LineIds Name="HMatrix.GetI">
+      <LineId Id="5" Count="0" />
+      <LineId Id="16" Count="0" />
+      <LineId Id="19" Count="0" />
+      <LineId Id="8" Count="0" />
+      <LineId Id="17" Count="0" />
+      <LineId Id="7" Count="0" />
+    </LineIds>
+    <LineIds Name="HMatrix.GetReversed">
+      <LineId Id="5" Count="1" />
+    </LineIds>
+    <LineIds Name="HMatrix.GetRMatrixComponent">
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="HMatrix.GetTransformedHMatrix">
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="HMatrix.GetTransformedVector3">
+      <LineId Id="34" Count="0" />
+      <LineId Id="13" Count="0" />
+    </LineIds>
+    <LineIds Name="HMatrix.GetVector3Component">
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="HMatrix.Reverse">
+      <LineId Id="24" Count="1" />
+    </LineIds>
+    <LineIds Name="HMatrix.SetFromComponents">
+      <LineId Id="62" Count="0" />
+      <LineId Id="55" Count="1" />
+    </LineIds>
+    <LineIds Name="HMatrix.SetI">
+      <LineId Id="22" Count="1" />
+      <LineId Id="26" Count="0" />
+      <LineId Id="8" Count="1" />
+      <LineId Id="24" Count="0" />
+      <LineId Id="7" Count="0" />
+    </LineIds>
+    <LineIds Name="HMatrix.TransformBy">
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="HMatrix.TransformHMatrix">
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="HMatrix.TransformVector3">
+      <LineId Id="20" Count="8" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>
