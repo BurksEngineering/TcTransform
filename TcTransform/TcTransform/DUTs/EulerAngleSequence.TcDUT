@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
+  <DUT Name="EulerAngleSequence" Id="{128194c4-690d-0611-07a1-b062f205ad12}">
+    <Declaration><![CDATA[{attribute 'qualified_only'}
+{attribute 'strict'}
+TYPE EulerAngleSequence :
+(
+	ZXZ := 0,
+	XYX := 1,
+	YZY := 2,
+	ZYZ := 3,
+	XZX := 4,
+	YXY := 5
+);
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

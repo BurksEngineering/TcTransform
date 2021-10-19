@@ -1,0 +1,182 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
+  <POU Name="AngleSequenceOrientation" Id="{91c36954-4106-0a01-024e-d760f4edff85}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK ABSTRACT AngleSequenceOrientation
+VAR_INPUT
+END_VAR
+VAR_OUTPUT
+END_VAR
+VAR
+	AngleAccessor_ : AngleSequenceAngleAccessor;
+	DimensionAccessor_ : AngleSequenceDimensionAccessor;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[]]></ST>
+    </Implementation>
+    <Folder Name="Comparators" Id="{056e3e46-ace0-0f4d-197e-1c43f9d62b9f}" />
+    <Folder Name="Getters" Id="{31f15295-2a86-0523-3f5b-d1658df2c6a2}" />
+    <Folder Name="Properties" Id="{99ca7078-f857-00b2-1067-f15f9306005a}" />
+    <Folder Name="Setters" Id="{23d81c03-05b6-01ad-36b9-d1e41741dce6}" />
+    <Property Name="AngleAccessor" Id="{11a760fc-2480-01b8-337f-c9bffd200315}" FolderPath="Properties\">
+      <Declaration><![CDATA[//DO NOT HANG ON TO THIS POINTER. if you do assignment it won't carry over!
+PROPERTY PUBLIC AngleAccessor : REFERENCE TO MATRIX]]></Declaration>
+      <Get Name="Get" Id="{88dd82e8-9481-0a6c-2fd2-d8f977f39aa8}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[AngleAccessor_.Init(THIS^);
+AngleAccessor REF= AngleAccessor_;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Property Name="DimensionAccessor" Id="{19c6e8e2-81df-0c00-1b2e-adecf6eb7a00}" FolderPath="Properties\">
+      <Declaration><![CDATA[//DO NOT HANG ON TO THIS POINTER. if you do assignment it won't carry over!
+PROPERTY PUBLIC DimensionAccessor : REFERENCE TO MATRIX]]></Declaration>
+      <Get Name="Get" Id="{ae8d1f08-05e4-07d1-20fc-eb88dd87e4ef}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[DimensionAccessor_.Init(THIS^);
+DimensionAccessor REF= DimensionAccessor_;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Method Name="GetAngle" Id="{683479fa-e14d-0644-3204-ec2871538321}" FolderPath="Getters\">
+      <Declaration><![CDATA[METHOD PUBLIC ABSTRACT GetAngle : LREAL
+VAR_INPUT
+	I : UINT;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="GetDimension" Id="{f09431ae-1b6a-0c54-04b3-f0a65be1f29e}" FolderPath="Getters\">
+      <Declaration><![CDATA[METHOD PUBLIC ABSTRACT GetDimension : Dimension
+VAR_INPUT
+	I : UINT;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="GetRMatrix" Id="{37f2980e-3109-07f3-11bd-a1b405edf03d}" FolderPath="Getters\">
+      <Declaration><![CDATA[METHOD PUBLIC GetRMatrix : RMatrix
+VAR_INPUT
+END_VAR
+VAR
+	I : UINT;
+	RTemp : RMatrix;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF Length = 0 THEN
+	RETURN;//identity
+END_IF
+
+//intrinsic rotations are chained left to right [https://en.wikipedia.org/wiki/Davenport_chained_rotations#Intrinsic_rotations]
+//GetR := R_0 * R_1 * .. * R_n-1
+//The best in-place function available is A := B * A (premultiplication) so we need to chain from n-1 to 0. Note that GetRMatrix is initialized to the identity
+FOR I := 0 TO LENGTH-1 DO
+	RTemp.SetFromAngle(GetAngle(Length-1-I),GetDimension(Length-1-I));
+	GetRMatrix.RotateBy(RTemp);//premultiplication is intrinsic rotations
+END_FOR]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="IsEqual" Id="{8390c591-0fae-06cf-2fe8-bbe5a311d610}" FolderPath="Comparators\">
+      <Declaration><![CDATA[METHOD PUBLIC IsEqual : BOOL
+VAR_INPUT
+	O : REFERENCE TO AngleSequenceOrientation;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IsEqual := IsEqualDimension(O) AND AngleAccessor.IsEqual(O.AngleAccessor);]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="IsEqualDimension" Id="{3e7b694c-20f0-0581-0275-21af10679b05}" FolderPath="Comparators\">
+      <Declaration><![CDATA[METHOD PUBLIC IsEqualDimension : BOOL
+VAR_INPUT
+	O : REFERENCE TO AngleSequenceOrientation;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IsEqualDimension := IsEqualSize(O) AND DimensionAccessor.IsEqual(O.DimensionAccessor);]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="IsEqualSize" Id="{c0443992-2c2f-0705-1a95-924b8939b688}" FolderPath="Comparators\">
+      <Declaration><![CDATA[METHOD PUBLIC IsEqualSize : BOOL
+VAR_INPUT
+	O : REFERENCE TO AngleSequenceOrientation;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IsEqualSize := Length = O.Length;]]></ST>
+      </Implementation>
+    </Method>
+    <Property Name="Length" Id="{1b4e06f1-7093-0d82-322d-4e1a917abefc}" FolderPath="Properties\">
+      <Declaration><![CDATA[PROPERTY PUBLIC ABSTRACT Length : UINT]]></Declaration>
+      <Get Name="Get" Id="{44c34134-38cd-0cca-0b4b-d348b80671dc}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Method Name="SetAngle" Id="{06b026f4-de50-0c80-0f27-3da774eed322}" FolderPath="Setters\">
+      <Declaration><![CDATA[METHOD PUBLIC ABSTRACT SetAngle : BOOL
+VAR_INPUT
+	I : UINT;
+	Val : LREAL;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[]]></ST>
+      </Implementation>
+    </Method>
+    <LineIds Name="AngleSequenceOrientation">
+      <LineId Id="9" Count="0" />
+    </LineIds>
+    <LineIds Name="AngleSequenceOrientation.AngleAccessor.Get">
+      <LineId Id="5" Count="0" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="AngleSequenceOrientation.DimensionAccessor.Get">
+      <LineId Id="5" Count="0" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="AngleSequenceOrientation.GetAngle">
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="AngleSequenceOrientation.GetDimension">
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="AngleSequenceOrientation.GetRMatrix">
+      <LineId Id="29" Count="2" />
+      <LineId Id="42" Count="0" />
+      <LineId Id="32" Count="0" />
+      <LineId Id="43" Count="1" />
+      <LineId Id="33" Count="2" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="AngleSequenceOrientation.IsEqual">
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="AngleSequenceOrientation.IsEqualDimension">
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="AngleSequenceOrientation.IsEqualSize">
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="AngleSequenceOrientation.Length.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="AngleSequenceOrientation.SetAngle">
+      <LineId Id="5" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

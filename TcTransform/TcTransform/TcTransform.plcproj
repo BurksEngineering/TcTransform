@@ -18,7 +18,7 @@
     <Company>Burks Engineering</Company>
     <Released>false</Released>
     <Title>TcTransform</Title>
-    <ProjectVersion>0.2.0</ProjectVersion>
+    <ProjectVersion>0.3.16</ProjectVersion>
     <LibraryCategories>
       <LibraryCategory xmlns="">
         <Id>{d5875a41-817d-44f3-8af7-6c59eaddc95f}</Id>
@@ -59,11 +59,47 @@
     </PlaceholderReference>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="DUTs" />
     <Folder Include="POUs" />
+    <Folder Include="POUs\AngleSequence" />
+    <Folder Include="POUs\AngleSequence\MatrixAccessors" />
     <Folder Include="Version" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DUTs\Dimension.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DUTs\TaitBryanAngleSequence.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DUTs\EulerAngleSequence.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="POUs\AngleSequence\AngleSequenceOrientation.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="POUs\AngleSequence\EulerAngleOrientation.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="POUs\AngleSequence\MatrixAccessors\AngleSequenceAccessor.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="POUs\AngleSequence\MatrixAccessors\AngleSequenceAngleAccessor.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="POUs\AngleSequence\MatrixAccessors\AngleSequenceDimensionAccessor.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="POUs\AngleSequence\TaitBryanAngleOrientation.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="POUs\ATAN2.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="POUs\HMatrix.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="POUs\HMatrixReverseAccessor.TcPOU">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="POUs\RMatrix.TcPOU">
@@ -83,7 +119,7 @@
   </ItemGroup>
   <ItemGroup>
     <PlaceholderResolution Include="TcMatrix">
-      <Resolution>TcMatrix, 1.2.2 (Burks Engineering)</Resolution>
+      <Resolution>TcMatrix, 1.2.14 (Burks Engineering)</Resolution>
     </PlaceholderResolution>
   </ItemGroup>
   <ProjectExtensions>

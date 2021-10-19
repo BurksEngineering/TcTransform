@@ -1,0 +1,372 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
+  <POU Name="EulerAngleOrientation" Id="{6250414d-7ffc-0b08-01d4-0bd3302e692f}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK EulerAngleOrientation EXTENDS AngleSequenceOrientation
+VAR_INPUT
+END_VAR
+VAR_OUTPUT
+END_VAR
+VAR
+	Angles_ : ARRAY [0..2] OF LREAL; 
+	Sequence_ : EulerAngleSequence;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[]]></ST>
+    </Implementation>
+    <Folder Name="Getters" Id="{91c868c0-17e3-03c8-3247-0f5dcd5f58b0}" />
+    <Folder Name="Properties" Id="{b3a14366-a718-0072-0ea3-e15a9f6a7faf}" />
+    <Folder Name="Setters" Id="{bf9614b6-5791-052d-36d3-a6fecf42a028}" />
+    <Method Name="GetAngle" Id="{58f01ac2-632f-0309-3608-db069ea93297}" FolderPath="Getters\">
+      <Declaration><![CDATA[METHOD PUBLIC  GetAngle : LREAL
+VAR_INPUT
+	I : UINT;
+END_VAR
+VAR
+	Angles : ARRAY [0..2] OF LREAL;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF I >= Length THEN
+	GetAngle := 0;
+	RETURN;
+END_IF
+
+GetAngle := Angles[I];]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="GetDimension" Id="{82228fe6-f24f-08e0-1dc7-5be2f0c94535}" FolderPath="Getters\">
+      <Declaration><![CDATA[METHOD PUBLIC  GetDimension : Dimension
+VAR_INPUT
+	I : UINT;
+END_VAR
+VAR
+	Dims : ARRAY [0..2] OF Dimension;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF I >= Length THEN
+	GetDimension := 0;
+	RETURN;
+END_IF
+
+Dims := GetDimensions();
+GetDimension := Dims[I];]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="GetDimensions" Id="{75983734-9b8f-0a4b-2351-422179b409ea}" FolderPath="Getters\">
+      <Declaration><![CDATA[METHOD PUBLIC GetDimensions : ARRAY [0..2] OF Dimension
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[CASE Sequence OF
+	EulerAngleSequence.XYX:
+		GetDimensions[0] := 0;
+		GetDimensions[1] := 1;
+		GetDimensions[2] := 0;
+	EulerAngleSequence.XZX:
+		GetDimensions[0] := 0;
+		GetDimensions[1] := 2;
+		GetDimensions[2] := 0;
+	EulerAngleSequence.YXY:
+		GetDimensions[0] := 1;
+		GetDimensions[1] := 0;
+		GetDimensions[2] := 1;
+	EulerAngleSequence.YZY:
+		GetDimensions[0] := 1;
+		GetDimensions[1] := 2;
+		GetDimensions[2] := 1;
+	EulerAngleSequence.ZXZ:
+		GetDimensions[0] := 2;
+		GetDimensions[1] := 0;
+		GetDimensions[2] := 2;
+	EulerAngleSequence.ZYZ:
+		GetDimensions[0] := 2;
+		GetDimensions[1] := 1;
+		GetDimensions[2] := 2;
+	ELSE
+		GetDimensions[0] := 0;
+		GetDimensions[1] := 0;
+		GetDimensions[2] := 0;
+END_CASE]]></ST>
+      </Implementation>
+    </Method>
+    <Property Name="Length" Id="{b82e00c0-8a9b-03c0-2038-f6551aefcff2}" FolderPath="Properties\">
+      <Declaration><![CDATA[PROPERTY Length : UINT]]></Declaration>
+      <Get Name="Get" Id="{61adad19-8228-0348-39f4-3f87acfad94f}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[Length := 3;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Property Name="RaDeg" Id="{7590ef98-b75c-0b20-0e44-dc9b4e96d426}" FolderPath="Properties\">
+      <Declaration><![CDATA[PROPERTY PUBLIC RaDeg : LREAL]]></Declaration>
+      <Get Name="Get" Id="{a9c17d29-747f-0af5-3fca-dd0ac5f6e9f1}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[RaDeg := 180 * Angles_[0] / PI;]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{7b341c93-38cc-076a-1f7b-e3a6d7ade0f7}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[Angles_[0] := PI * RaDeg / 180;]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <Property Name="RaRad" Id="{b4f0f8cd-f767-01ec-270c-2546195198f1}" FolderPath="Properties\">
+      <Declaration><![CDATA[PROPERTY PUBLIC RaRad : LREAL]]></Declaration>
+      <Get Name="Get" Id="{c934429d-4423-0f16-3fad-baa321bd6f39}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[RaRad := Angles_[0];]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{c9eb25df-cd0e-0de7-3f74-91af35978334}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[Angles_[0] := RaRad;]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <Property Name="RbDeg" Id="{e0727229-9a66-00a7-0932-7525874fed84}" FolderPath="Properties\">
+      <Declaration><![CDATA[PROPERTY PUBLIC RbDeg : LREAL]]></Declaration>
+      <Get Name="Get" Id="{7e7a3c89-650d-0223-1856-c4dac77c99bd}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[RbDeg := 180 * Angles_[1] / PI;]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{d2bc4b30-2d8c-086f-0a84-a102d8a924d9}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[Angles_[1] := PI * RbDeg / 180;]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <Property Name="RbRad" Id="{50ee624c-31c5-0f46-30f2-042a4370722e}" FolderPath="Properties\">
+      <Declaration><![CDATA[PROPERTY PUBLIC RbRad : LREAL]]></Declaration>
+      <Get Name="Get" Id="{e20689c3-262e-0298-0920-0e903e52c0b0}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[RbRad := Angles_[1];]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{6374b0af-8682-0f0e-0926-83a317e7a79e}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[Angles_[1] := RbRad;]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <Property Name="RcDeg" Id="{e95ae036-8ffe-0641-224a-48dfed486881}" FolderPath="Properties\">
+      <Declaration><![CDATA[PROPERTY PUBLIC RcDeg : LREAL]]></Declaration>
+      <Get Name="Get" Id="{a2990168-a5aa-0e91-03d0-a19e040ae232}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[RcDeg := 180 * Angles_[2] / PI;]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{62d1a790-b443-0657-3cd9-8a022febd458}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[Angles_[2] := PI * RcDeg / 180;]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <Property Name="RcRad" Id="{c5d0d9d9-7029-0507-2dde-27c6d67e80f7}" FolderPath="Properties\">
+      <Declaration><![CDATA[PROPERTY PUBLIC RcRad : LREAL]]></Declaration>
+      <Get Name="Get" Id="{8d2330a4-b1da-02aa-1571-51d72b426bc1}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[RcRad := Angles_[2];]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{73c7808d-c208-078f-3df1-80d68d8b675a}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[Angles_[2] := RcRad;]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <Property Name="Sequence" Id="{293aad27-2052-09a0-2d77-a11adb7ed64a}" FolderPath="Properties\">
+      <Declaration><![CDATA[PROPERTY PUBLIC Sequence : EulerAngleSequence]]></Declaration>
+      <Get Name="Get" Id="{b44d5053-7e73-0e50-1a65-5b61c95a20cd}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[Sequence := Sequence_;]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{b1db0a32-c79e-08c4-19ca-4b3a4a909827}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[Sequence_ := Sequence;]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <Method Name="SetAngle" Id="{ac5bdeed-6a79-0a61-1b23-9e707ff2c1a6}" FolderPath="Setters\">
+      <Declaration><![CDATA[METHOD PUBLIC  SetAngle : BOOL
+VAR_INPUT
+	I : UINT;
+	Val : LREAL;
+END_VAR
+VAR
+	Angles : ARRAY [0..2] OF LREAL;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF I >= Length THEN
+	GetAngle := 0;
+	SetAngle := FALSE;
+	RETURN;
+END_IF
+
+SetAngle := TRUE;
+Angles_[I] := Val;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="SetFromComponentsDeg" Id="{80cd5fd9-05ce-0de9-11ff-3c929c728842}" FolderPath="Setters\">
+      <Declaration><![CDATA[METHOD PUBLIC SetFromComponentsDeg
+VAR_INPUT
+	Ra : LREAL;
+	Rb : LREAL;
+	Rc : LREAL;
+	Seq : EulerAngleSequence;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[RaDeg := Ra;
+RbDeg := Rb;
+RcDeg := Rc;
+Sequence := Seq;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="SetFromComponentsRad" Id="{4688a918-e438-0ac0-0cd1-6ae1eab851fc}" FolderPath="Setters\">
+      <Declaration><![CDATA[METHOD PUBLIC SetFromComponentsRad
+VAR_INPUT
+	Ra : LREAL;
+	Rb : LREAL;
+	Rc : LREAL;
+	Seq : EulerAngleSequence;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[RaRad := Ra;
+RbRad := Rb;
+RcRad := Rc;
+Sequence := Seq;]]></ST>
+      </Implementation>
+    </Method>
+    <LineIds Name="EulerAngleOrientation">
+      <LineId Id="9" Count="0" />
+    </LineIds>
+    <LineIds Name="EulerAngleOrientation.GetAngle">
+      <LineId Id="6" Count="1" />
+      <LineId Id="9" Count="0" />
+      <LineId Id="8" Count="0" />
+      <LineId Id="11" Count="0" />
+      <LineId Id="17" Count="0" />
+    </LineIds>
+    <LineIds Name="EulerAngleOrientation.GetDimension">
+      <LineId Id="18" Count="5" />
+      <LineId Id="17" Count="0" />
+    </LineIds>
+    <LineIds Name="EulerAngleOrientation.GetDimensions">
+      <LineId Id="35" Count="25" />
+      <LineId Id="62" Count="1" />
+      <LineId Id="61" Count="0" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="EulerAngleOrientation.Length.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="EulerAngleOrientation.RaDeg.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="EulerAngleOrientation.RaDeg.Set">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="EulerAngleOrientation.RaRad.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="EulerAngleOrientation.RaRad.Set">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="EulerAngleOrientation.RbDeg.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="EulerAngleOrientation.RbDeg.Set">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="EulerAngleOrientation.RbRad.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="EulerAngleOrientation.RbRad.Set">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="EulerAngleOrientation.RcDeg.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="EulerAngleOrientation.RcDeg.Set">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="EulerAngleOrientation.RcRad.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="EulerAngleOrientation.RcRad.Set">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="EulerAngleOrientation.Sequence.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="EulerAngleOrientation.Sequence.Set">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="EulerAngleOrientation.SetAngle">
+      <LineId Id="6" Count="1" />
+      <LineId Id="25" Count="0" />
+      <LineId Id="9" Count="0" />
+      <LineId Id="8" Count="0" />
+      <LineId Id="27" Count="0" />
+      <LineId Id="26" Count="0" />
+      <LineId Id="17" Count="0" />
+    </LineIds>
+    <LineIds Name="EulerAngleOrientation.SetFromComponentsDeg">
+      <LineId Id="5" Count="0" />
+      <LineId Id="10" Count="2" />
+    </LineIds>
+    <LineIds Name="EulerAngleOrientation.SetFromComponentsRad">
+      <LineId Id="5" Count="0" />
+      <LineId Id="10" Count="2" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

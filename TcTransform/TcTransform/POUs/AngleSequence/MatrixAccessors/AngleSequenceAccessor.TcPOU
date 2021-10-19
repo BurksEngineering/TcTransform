@@ -1,0 +1,78 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
+  <POU Name="AngleSequenceAccessor" Id="{55367483-4f8f-07ac-3649-8652ccddc0d4}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK ABSTRACT AngleSequenceAccessor EXTENDS Matrix
+VAR_INPUT
+END_VAR
+VAR_OUTPUT
+END_VAR
+VAR
+	O_ : REFERENCE TO AngleSequenceOrientation;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[]]></ST>
+    </Implementation>
+    <Folder Name="Initialziers" Id="{79a0317c-0b4a-09d0-2d30-fb28beb622f5}" />
+    <Folder Name="Overrides" Id="{08eb1a25-3c5b-0a78-0cf3-93f51fb93b13}" />
+    <Property Name="Cols" Id="{36d083b3-08b3-0294-1c57-7ba1fc67cb70}" FolderPath="Overrides\">
+      <Declaration><![CDATA[//Total number of columns in this matrix
+PROPERTY PUBLIC Cols : UINT]]></Declaration>
+      <Get Name="Get" Id="{db991d45-12c9-071b-3e38-f092cfeb5cb6}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[IF NOT __ISVALIDREF(O_) THEN
+	Cols := 0;
+	LogWarning('%s Attempted Cols access using uninitialized Matrix Accessor');
+ELSE
+	Cols :=1;
+END_IF]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Method Name="Init" Id="{23575e2e-d16b-0e28-2710-d6c820171276}" FolderPath="Initialziers\">
+      <Declaration><![CDATA[METHOD PUBLIC Init
+VAR_INPUT
+	O : REFERENCE TO AngleSequenceOrientation;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[O_ REF= O;]]></ST>
+      </Implementation>
+    </Method>
+    <Property Name="Rows" Id="{3dc241e7-7a77-02e2-2af7-2f2db64f9fe1}" FolderPath="Overrides\">
+      <Declaration><![CDATA[//Total number of rows in this matrix
+PROPERTY PUBLIC Rows : UINT]]></Declaration>
+      <Get Name="Get" Id="{5d12b961-486d-019d-287d-991e68701dd3}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[IF NOT __ISVALIDREF(O_) THEN
+	Rows := 0;
+	LogWarning('%s Attempted Rows access using uninitialized Matrix Accessor');
+ELSE
+	Rows := O_.Length;
+END_IF;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <LineIds Name="AngleSequenceAccessor">
+      <LineId Id="9" Count="0" />
+    </LineIds>
+    <LineIds Name="AngleSequenceAccessor.Cols.Get">
+      <LineId Id="20" Count="4" />
+      <LineId Id="6" Count="0" />
+    </LineIds>
+    <LineIds Name="AngleSequenceAccessor.Init">
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="AngleSequenceAccessor.Rows.Get">
+      <LineId Id="14" Count="2" />
+      <LineId Id="2" Count="0" />
+      <LineId Id="17" Count="1" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

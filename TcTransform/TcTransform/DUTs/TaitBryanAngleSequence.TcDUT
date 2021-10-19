@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
+  <DUT Name="TaitBryanAngleSequence" Id="{77e645ed-c33e-0fe4-130a-e049a56d9045}">
+    <Declaration><![CDATA[{attribute 'qualified_only'}
+{attribute 'strict'}
+TYPE TaitBryanAngleSequence :
+(
+	XYZ := 0,
+	YZX := 1,
+	ZXY := 2,
+	XZY := 3,
+	ZYX := 4,
+	YXZ := 5	//Standard Roll/Pitch/Yaw
+);
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

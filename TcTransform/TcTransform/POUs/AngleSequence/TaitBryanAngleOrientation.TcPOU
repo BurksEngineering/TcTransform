@@ -1,0 +1,394 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
+  <POU Name="TaitBryanAngleOrientation" Id="{30f16bb7-b6a8-07ba-01fe-7fa9cf8edcd3}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK TaitBryanAngleOrientation EXTENDS AngleSequenceOrientation
+VAR_INPUT
+END_VAR
+VAR_OUTPUT
+END_VAR
+VAR
+	Angles_ : ARRAY [0..2] OF LREAL;
+	Sequence_ : TaitBryanAngleSequence;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[]]></ST>
+    </Implementation>
+    <Folder Name="Getters" Id="{d092d2bb-44ff-015b-23d0-0cd0696517ea}" />
+    <Folder Name="Properties" Id="{cfe678ce-52d8-0d59-378d-9d7a9f94d78e}" />
+    <Folder Name="Setters" Id="{476f1314-1760-0491-162a-ca22b126dafb}" />
+    <Method Name="GetAngle" Id="{f6726e47-c5fb-0990-0956-4dd56856561f}" FolderPath="Getters\">
+      <Declaration><![CDATA[METHOD PUBLIC  GetAngle : LREAL
+VAR_INPUT
+	I : UINT;
+END_VAR
+VAR
+	Dim : Dimension;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF I >= Length THEN
+	GetAngle := 0;
+	RETURN;
+END_IF
+
+Dim := GetDimension(I);
+
+IF Dim >= Length THEN
+	GetAngle := 0;
+	RETURN;
+END_IF
+
+GetAngle := Angles_[Dim];
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="GetDimension" Id="{69e98eb8-908f-0785-2692-8746de432a97}" FolderPath="Getters\">
+      <Declaration><![CDATA[METHOD PUBLIC GetDimension : Dimension
+VAR_INPUT
+	I : UINT;
+END_VAR
+VAR
+	Dims : ARRAY [0..2] OF Dimension;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF I >= Length THEN
+	GetDimension := 0;
+	RETURN;
+END_IF
+
+Dims := GetDimensions();
+GetDimension := Dims[I];]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="GetDimensions" Id="{2cd7e7e1-f488-048d-091d-9e023d75faaa}" FolderPath="Getters\">
+      <Declaration><![CDATA[METHOD PUBLIC GetDimensions : ARRAY [0..2] OF Dimension
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[CASE Sequence OF
+	TaitBryanAngleSequence.XYZ:
+		GetDimensions[0] := 0;
+		GetDimensions[1] := 1;
+		GetDimensions[2] := 2;
+	TaitBryanAngleSequence.XZY:
+		GetDimensions[0] := 0;
+		GetDimensions[1] := 2;
+		GetDimensions[2] := 1;
+	TaitBryanAngleSequence.YXZ:
+		GetDimensions[0] := 1;
+		GetDimensions[1] := 0;
+		GetDimensions[2] := 2;
+	TaitBryanAngleSequence.YZX:
+		GetDimensions[0] := 1;
+		GetDimensions[1] := 2;
+		GetDimensions[2] := 0;
+	TaitBryanAngleSequence.ZXY:
+		GetDimensions[0] := 2;
+		GetDimensions[1] := 0;
+		GetDimensions[2] := 1;
+	TaitBryanAngleSequence.ZYX:
+		GetDimensions[0] := 2;
+		GetDimensions[1] := 1;
+		GetDimensions[2] := 0;
+	ELSE
+		GetDimensions[0] := 0;
+		GetDimensions[1] := 0;
+		GetDimensions[2] := 0;
+END_CASE]]></ST>
+      </Implementation>
+    </Method>
+    <Property Name="Length" Id="{a6ac7c86-1428-0662-043d-544990228d08}" FolderPath="Properties\">
+      <Declaration><![CDATA[PROPERTY Length : UINT]]></Declaration>
+      <Get Name="Get" Id="{2a85c423-ef9b-08d9-2079-0739d9af36a0}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[Length := 3;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Property Name="RxDeg" Id="{202974e2-8c00-0fea-3ea3-e7c0eef9724c}" FolderPath="Properties\">
+      <Declaration><![CDATA[PROPERTY PUBLIC RxDeg : LREAL]]></Declaration>
+      <Get Name="Get" Id="{b77c4288-df7d-087d-1a88-477a2518b241}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[RxDeg := 180 * Angles_[0] / PI;]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{88eafb0b-2c6d-0979-33df-28e4a08cccd2}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[Angles_[0] := PI * RxDeg / 180;]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <Property Name="RxRad" Id="{8c7a8fb7-996d-0655-0d2c-d6e6dfff0ccb}" FolderPath="Properties\">
+      <Declaration><![CDATA[PROPERTY PUBLIC RxRad : LREAL]]></Declaration>
+      <Get Name="Get" Id="{55821b3b-df54-0b0e-3aec-5a2afcde2db5}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[RxRad := Angles_[0];]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{d0bb744d-82a1-0de4-12bc-802f8660aaac}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[Angles_[0] := RxRad;]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <Property Name="RyDeg" Id="{71278da6-8344-0821-398c-4a19e65bf722}" FolderPath="Properties\">
+      <Declaration><![CDATA[PROPERTY PUBLIC RyDeg : LREAL]]></Declaration>
+      <Get Name="Get" Id="{d8139ec5-0086-0127-0a6c-e1ab20004c64}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[RyDeg := 180 * Angles_[1] / PI;]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{521419e4-aeb9-0e67-3406-cc3086e090a7}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[Angles_[1] := PI * RyDeg / 180;]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <Property Name="RyRad" Id="{de7cefc7-a31a-0dea-206f-3553e6978e35}" FolderPath="Properties\">
+      <Declaration><![CDATA[PROPERTY PUBLIC RyRad : LREAL]]></Declaration>
+      <Get Name="Get" Id="{84c391e8-c14c-0f77-0a7c-dbe8ae38b1b7}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[RyRad := Angles_[1];]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{9f9b4df5-6f3a-019b-0abc-2692dd5a467a}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[Angles_[1] := RyRad;]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <Property Name="RzDeg" Id="{d87122d9-49a2-0517-18b6-eefd59b51d18}" FolderPath="Properties\">
+      <Declaration><![CDATA[PROPERTY PUBLIC RzDeg : LREAL]]></Declaration>
+      <Get Name="Get" Id="{807a4354-cd23-0b9b-0128-62683afc992e}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[RzDeg := 180 * Angles_[2] / PI;]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{e7f1f502-f4e7-0ddc-347f-d814a3c9f4f3}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[Angles_[2] := PI * RzDeg / 180;]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <Property Name="RzRad" Id="{8e1cae5d-0f96-0804-190f-1b7cddb4c154}" FolderPath="Properties\">
+      <Declaration><![CDATA[PROPERTY PUBLIC RzRad : LREAL]]></Declaration>
+      <Get Name="Get" Id="{8c7eaa5a-ecd8-0ed8-0647-52e2c1bc6519}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[RzRad := Angles_[2];]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{a08a6319-ebd0-0b30-3846-60b7569e33c0}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[Angles_[2] := RzRad;]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <Property Name="Sequence" Id="{bdbbf1cc-9abf-0851-1958-c67ed62108f2}" FolderPath="Properties\">
+      <Declaration><![CDATA[PROPERTY PUBLIC Sequence : TaitBryanAngleSequence]]></Declaration>
+      <Get Name="Get" Id="{c01ca441-f7fa-0521-25d3-1e68afd2ff61}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[Sequence := Sequence_;]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{fd12c575-2803-0ce1-33b8-c23c25cde2d3}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[Sequence_ := Sequence;]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <Method Name="SetAngle" Id="{4ebf317e-4620-0dbb-0fd2-2805540c84d9}" FolderPath="Setters\">
+      <Declaration><![CDATA[METHOD PUBLIC SetAngle : BOOL
+VAR_INPUT
+	I : UINT;
+	Val : LREAL;
+END_VAR
+VAR
+	Dim : Dimension;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF I >= Length THEN
+	SetAngle := FALSE;
+	RETURN;
+END_IF
+
+Dim := GetDimension(I);
+
+IF Dim >= Length THEN
+	SetAngle := FALSE;
+	RETURN;
+END_IF
+
+SetAngle := TRUE;
+
+Angles_[Dim] := Val;
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="SetFromComponentsDeg" Id="{426c64c2-25ed-0ee8-1928-5154abb51fe0}" FolderPath="Setters\">
+      <Declaration><![CDATA[METHOD PUBLIC SetFromComponentsDeg
+VAR_INPUT
+	Rx : LREAL;
+	Ry : LREAL;
+	Rz : LREAL;
+	Seq : TaitBryanAngleSequence;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[RxDeg := Rx;
+RyDeg := Ry;
+RzDeg := Rz;
+Sequence := Seq;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="SetFromComponentsRad" Id="{73c29634-84a1-0471-382d-dc6b1c8f59e3}" FolderPath="Setters\">
+      <Declaration><![CDATA[METHOD PUBLIC SetFromComponentsRad
+VAR_INPUT
+	Rx : LREAL;
+	Ry : LREAL;
+	Rz : LREAL;
+	Seq : TaitBryanAngleSequence;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[RxRad := Rx;
+RyRad := Ry;
+RzRad := Rz;
+Sequence := Seq;]]></ST>
+      </Implementation>
+    </Method>
+    <LineIds Name="TaitBryanAngleOrientation">
+      <LineId Id="9" Count="0" />
+    </LineIds>
+    <LineIds Name="TaitBryanAngleOrientation.GetAngle">
+      <LineId Id="6" Count="1" />
+      <LineId Id="9" Count="0" />
+      <LineId Id="8" Count="0" />
+      <LineId Id="11" Count="0" />
+      <LineId Id="17" Count="0" />
+      <LineId Id="25" Count="0" />
+      <LineId Id="24" Count="0" />
+      <LineId Id="26" Count="0" />
+      <LineId Id="28" Count="0" />
+      <LineId Id="27" Count="0" />
+      <LineId Id="31" Count="0" />
+      <LineId Id="30" Count="0" />
+      <LineId Id="29" Count="0" />
+    </LineIds>
+    <LineIds Name="TaitBryanAngleOrientation.GetDimension">
+      <LineId Id="9" Count="5" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="TaitBryanAngleOrientation.GetDimensions">
+      <LineId Id="35" Count="25" />
+      <LineId Id="62" Count="1" />
+      <LineId Id="61" Count="0" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="TaitBryanAngleOrientation.Length.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="TaitBryanAngleOrientation.RxDeg.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="TaitBryanAngleOrientation.RxDeg.Set">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="TaitBryanAngleOrientation.RxRad.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="TaitBryanAngleOrientation.RxRad.Set">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="TaitBryanAngleOrientation.RyDeg.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="TaitBryanAngleOrientation.RyDeg.Set">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="TaitBryanAngleOrientation.RyRad.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="TaitBryanAngleOrientation.RyRad.Set">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="TaitBryanAngleOrientation.RzDeg.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="TaitBryanAngleOrientation.RzDeg.Set">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="TaitBryanAngleOrientation.RzRad.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="TaitBryanAngleOrientation.RzRad.Set">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="TaitBryanAngleOrientation.Sequence.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="TaitBryanAngleOrientation.Sequence.Set">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="TaitBryanAngleOrientation.SetAngle">
+      <LineId Id="8" Count="10" />
+      <LineId Id="24" Count="0" />
+      <LineId Id="23" Count="0" />
+      <LineId Id="19" Count="1" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="TaitBryanAngleOrientation.SetFromComponentsDeg">
+      <LineId Id="5" Count="0" />
+      <LineId Id="10" Count="2" />
+    </LineIds>
+    <LineIds Name="TaitBryanAngleOrientation.SetFromComponentsRad">
+      <LineId Id="5" Count="0" />
+      <LineId Id="10" Count="2" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

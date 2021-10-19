@@ -1,0 +1,43 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
+  <POU Name="ATAN2" Id="{224ba177-95fc-0ad0-0257-38d644868c10}" SpecialFunc="None">
+    <Declaration><![CDATA[//ATAN2(Y,X); [https://en.wikipedia.org/wiki/Atan2]
+FUNCTION ATAN2 : LREAL
+VAR_INPUT
+	Y : LREAL;
+	X : LREAL;
+END_VAR
+VAR
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[IF X > 0 THEN
+	ATAN2 := ATAN(Y/X);
+ELSIF X < 0 AND Y >= 0 THEN
+	ATAN2 := ATAN(Y/X) + PI;
+ELSIF X < 0 AND Y < 0 THEN
+	ATAN2 := ATAN(Y/X) - PI;
+ELSIF X = 0 AND Y > 0 THEN
+	ATAN2 := PI/2;
+ELSIF X = 0 AND Y < 0 THEN
+	ATAN2 := -PI/2;
+ELSE //X=0 AND y=0
+	//technically undefined...
+	ATAN2 := 0;
+	ADSLOGSTR(ADSLOG_MSGTYPE_WARN,'Attempt to use ATAN2 with X=0 and Y=0 detected. Function is undefined for this case!','');
+END_IF]]></ST>
+    </Implementation>
+    <LineIds Name="ATAN2">
+      <LineId Id="7" Count="0" />
+      <LineId Id="11" Count="0" />
+      <LineId Id="13" Count="0" />
+      <LineId Id="15" Count="0" />
+      <LineId Id="14" Count="0" />
+      <LineId Id="16" Count="5" />
+      <LineId Id="23" Count="0" />
+      <LineId Id="22" Count="0" />
+      <LineId Id="24" Count="0" />
+      <LineId Id="12" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

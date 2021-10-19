@@ -89,6 +89,16 @@ Vs[1] := ADR(M_V);
 Vector_CrossProduct(GetVector3CrossProduct,Vs);]]></ST>
       </Implementation>
     </Method>
+    <Method Name="GetVector3Difference" Id="{a8cdd625-bd8e-03da-2caa-b18f9cf600a9}" FolderPath="Getters\">
+      <Declaration><![CDATA[METHOD PUBLIC GetVector3Difference : Vector3
+VAR_INPUT
+	M_V : REFERENCE TO Vector3;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[Matrix_ElementDifference(THIS^,M_V,GetVector3Difference);]]></ST>
+      </Implementation>
+    </Method>
     <Method Name="GetVector3DotProduct" Id="{5fc5a42d-49e3-41f0-b5c8-885289319f29}" FolderPath="Getters\">
       <Declaration><![CDATA[METHOD PUBLIC GetVector3DotProduct : LREAL
 VAR_INPUT
@@ -138,7 +148,19 @@ VAR
 	Temp : Vector3 := THIS^;
 END_VAR]]></Declaration>
       <Implementation>
-        <ST><![CDATA[Matrix_Product(M_R,Temp,THIS^);]]></ST>
+        <ST><![CDATA[M_R.RotateVector3(Temp,THIS^);]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="RotateByReverse" Id="{13df80b2-b918-02d1-1a34-9e75c60103ea}" FolderPath="Modifiers\">
+      <Declaration><![CDATA[METHOD PUBLIC RotateByReverse
+VAR_INPUT
+	M_R : REFERENCE TO RMAtrix;
+END_VAR
+VAR
+	Temp : Vector3 := THIS^;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[M_R.RotateVector3Reverse(Temp,THIS^);]]></ST>
       </Implementation>
     </Method>
     <Method Name="SetAsCrossProduct" Id="{a9c41c5c-c7b8-4bf5-93a5-afab6ffb1d24}" FolderPath="Setters\">
@@ -206,10 +228,22 @@ VAR_INPUT
 	M_H : REFERENCE TO HMatrix;
 END_VAR
 VAR
-	Temp : Vector3;
+	Temp : Vector3 := THIS^;
 END_VAR]]></Declaration>
       <Implementation>
-        <ST><![CDATA[M_H.TransformVector3(Temp,THIS^);]]></ST>
+        <ST><![CDATA[M_H.TransformVector3(temp,THIS^);]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="TransformByReverse" Id="{ee7c6a48-3991-0e24-3de7-d7ea1e8d4e61}" FolderPath="Modifiers\">
+      <Declaration><![CDATA[METHOD PUBLIC TransformByReverse
+VAR_INPUT
+	M_H : REFERENCE TO HMatrix;
+END_VAR
+VAR
+	Temp : Vector3 := THIS^;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[M_H.TransformVector3Reverse(Temp,THIS^);]]></ST>
       </Implementation>
     </Method>
     <Property Name="X" Id="{7de2667b-236e-40c4-bf59-9f14c31d7a7c}" FolderPath="Properties\">
@@ -290,6 +324,9 @@ END_VAR
       <LineId Id="17" Count="1" />
       <LineId Id="10" Count="0" />
     </LineIds>
+    <LineIds Name="Vector3.GetVector3Difference">
+      <LineId Id="5" Count="0" />
+    </LineIds>
     <LineIds Name="Vector3.GetVector3DotProduct">
       <LineId Id="5" Count="0" />
     </LineIds>
@@ -303,7 +340,10 @@ END_VAR
       <LineId Id="5" Count="0" />
     </LineIds>
     <LineIds Name="Vector3.RotateBy">
-      <LineId Id="5" Count="0" />
+      <LineId Id="12" Count="0" />
+    </LineIds>
+    <LineIds Name="Vector3.RotateByReverse">
+      <LineId Id="12" Count="0" />
     </LineIds>
     <LineIds Name="Vector3.SetAsCrossProduct">
       <LineId Id="10" Count="0" />
@@ -327,6 +367,9 @@ END_VAR
       <LineId Id="5" Count="0" />
     </LineIds>
     <LineIds Name="Vector3.TransformBy">
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="Vector3.TransformByReverse">
       <LineId Id="5" Count="0" />
     </LineIds>
     <LineIds Name="Vector3.X.Get">

@@ -15,7 +15,8 @@ WhenRotatedByIdentityExpectSame();
 WhenRotatedTwiceExpectDouble();
 WhenSetFrom321AnglesExpectResult();
 WhenVectorRotatedExpectResult();
-WhenReversedExpectOpposite();]]></ST>
+WhenReversedExpectOpposite();
+WhenSetFromVectorsExpectResult();]]></ST>
     </Implementation>
     <Method Name="WhenReversedExpectOpposite" Id="{e47eb044-1085-4952-9808-e96e8cc7d353}">
       <Declaration><![CDATA[METHOD PRIVATE WhenReversedExpectOpposite
@@ -30,8 +31,8 @@ END_VAR
         <ST><![CDATA[TEST('WhenReversedExpectOpposite');
 
 // @TEST-RUN
-R1.SetFromAngleDim(-PI/2,0);
-R2.SetFromAngleDim(PI/2,0);
+R1.SetFromAngle(-PI/2,0);
+R2.SetFromAngle(PI/2,0);
 R2.Reverse();
 
 // @TEST-ASSERT
@@ -76,10 +77,10 @@ END_VAR
         <ST><![CDATA[TEST('WhenRotatedTwiceExpectDouble');
 
 // @TEST-RUN
-R1.SetFromAngleDim(PI/2,0);
+R1.SetFromAngle(PI/2,0);
 R2.RotateBy(R1);
 R2.RotateBy(R1);
-R1.SetFromAngleDim(PI,0);
+R1.SetFromAngle(PI,0);
 R3.RotateBy(R1);
 
 // @TEST-ASSERT
@@ -95,6 +96,8 @@ TEST_FINISHED();]]></ST>
 VAR_INPUT
 END_VAR
 VAR
+	A1 : TaitBryanAngleOrientation;
+	A2 : TaitBryanAngleOrientation;
 	R1 : RMatrix;
 	R2 : RMatrix;
 	R3 : RMatrix;
@@ -104,13 +107,15 @@ END_VAR
         <ST><![CDATA[TEST('WhenSetFrom321AnglesExpectResult');
 
 // @TEST-RUN
-R1.SetFrom321EulerAngles(PI/2,PI/2,PI/2);
-R2.SetFromAngleDim(PI/2,0);
+A1.SetFromComponentsRad(PI/2,PI/2,PI/2,TaitBryanAngleSequence.ZYX);
+R1 := A1.GetRMatrix();
+R2.SetFromAngle(PI/2,0);
 R3.RotateBy(R2);
-R2.SetFromAngleDim(PI/2,1);
+R2.SetFromAngle(PI/2,1);
 R3.RotateBy(R2);
-R2.SetFromAngleDim(PI/2,2);
+R2.SetFromAngle(PI/2,2);
 R3.RotateBy(R2);
+A2 := R1.GetAngleSequence();
 
 // @TEST-ASSERT
 AssertTrue(R1.IsEqual(R3),'rotations from two methods are not equal');
@@ -142,9 +147,9 @@ END_VAR
         <ST><![CDATA[TEST('WhenSetFromAngleExpectResult');
 
 // @TEST-RUN
-R1.SetFromAngleDim(PI/2,0);
-R2.SetFromAngleDim(PI/2,1);
-R3.SetFromAngleDim(PI/2,2);
+R1.SetFromAngle(PI/2,0);
+R2.SetFromAngle(PI/2,1);
+R3.SetFromAngle(PI/2,2);
 R4 := R3;
 R3.Clear();
 
@@ -167,6 +172,51 @@ AssertTrue(R4.GetDeterminant() = 1,'R4 Determinant is not 1');
 TEST_FINISHED();]]></ST>
       </Implementation>
     </Method>
+    <Method Name="WhenSetFromVectorsExpectResult" Id="{7da436ae-ed2e-0f8f-030a-9a2316b96d5e}">
+      <Declaration><![CDATA[METHOD PRIVATE WhenSetFromVectorsExpectResult
+VAR_INPUT
+END_VAR
+VAR
+	VX : Vector3;
+	VY : Vector3;
+	VZ : Vector3;
+	R1 : RMatrix;
+	RX : RMatrix;
+	RY : RMatrix;
+	RZ : RMatrix;
+	RBad : RMatrix;
+	
+	ResX : BOOL;
+	ResY : BOOL;
+	ResZ : BOOL;
+	ResBad : BOOL;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[TEST('WhenSetFromVectorsExpectResult');
+
+// @TEST-RUN
+R1.SetFromAngle(PI/2,1);//90 deg rotation around Y
+VX.SetFromComponents(0,0,-1);
+VY.SetFromComponents(0,1,0);
+VZ.SetFromComponents(1,0,0);
+ResX := RX.SetFromVectorsYZ(VY,VZ);
+ResY := RY.SetFromVectorsXZ(VX,VZ);
+ResZ := RZ.SetFromVectorsXY(VX,VY);
+ResBad := Rbad.SetFromVectorsXY(VX,VX);
+
+// @TEST-ASSERT
+AssertFalse(ResBad,'Parallel vectors should not have worked');
+AssertTrue(ResX,'RX not calculated successfully');
+AssertTrue(R1.IsNearlyEqual(RX,1E-9),'RX not calculated correctly');
+AssertTrue(ResY,'RY not calculated successfully');
+AssertTrue(R1.IsNearlyEqual(RY,1E-9),'RY not calculated correctly');
+AssertTrue(ResZ,'RZ not calculated successfully');
+AssertTrue(R1.IsNearlyEqual(RZ,1E-9),'RZ not calculated correctly');
+
+TEST_FINISHED();]]></ST>
+      </Implementation>
+    </Method>
     <Method Name="WhenVectorRotatedExpectResult" Id="{ff1fca85-5a1f-458e-a62f-35a7e11201fe}">
       <Declaration><![CDATA[METHOD PRIVATE WhenVectorRotatedExpectResult
 VAR_INPUT
@@ -181,7 +231,7 @@ END_VAR
         <ST><![CDATA[TEST('WhenVectorRotatedExpectResult');
 
 // @TEST-RUN
-R1.SetFromAngleDim(PI/2,1);
+R1.SetFromAngle(PI/2,1);
 V1.X := 1;
 V2 := R1.GetRotatedVector3(V1);
 
@@ -197,6 +247,7 @@ TEST_FINISHED();]]></ST>
       <LineId Id="18" Count="1" />
       <LineId Id="17" Count="0" />
       <LineId Id="20" Count="1" />
+      <LineId Id="29" Count="0" />
     </LineIds>
     <LineIds Name="FB_RMatrix_Test.WhenReversedExpectOpposite">
       <LineId Id="6" Count="3" />
@@ -227,12 +278,14 @@ TEST_FINISHED();]]></ST>
       <LineId Id="7" Count="0" />
       <LineId Id="6" Count="0" />
       <LineId Id="21" Count="0" />
+      <LineId Id="74" Count="0" />
       <LineId Id="18" Count="0" />
       <LineId Id="54" Count="0" />
       <LineId Id="56" Count="0" />
       <LineId Id="55" Count="0" />
       <LineId Id="58" Count="0" />
       <LineId Id="57" Count="0" />
+      <LineId Id="76" Count="0" />
       <LineId Id="44" Count="0" />
       <LineId Id="11" Count="0" />
       <LineId Id="59" Count="0" />
@@ -261,6 +314,27 @@ TEST_FINISHED();]]></ST>
       <LineId Id="47" Count="2" />
       <LineId Id="53" Count="4" />
       <LineId Id="45" Count="0" />
+      <LineId Id="24" Count="0" />
+      <LineId Id="23" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_RMatrix_Test.WhenSetFromVectorsExpectResult">
+      <LineId Id="5" Count="0" />
+      <LineId Id="7" Count="0" />
+      <LineId Id="6" Count="0" />
+      <LineId Id="60" Count="0" />
+      <LineId Id="83" Count="2" />
+      <LineId Id="88" Count="1" />
+      <LineId Id="94" Count="0" />
+      <LineId Id="97" Count="0" />
+      <LineId Id="44" Count="0" />
+      <LineId Id="11" Count="0" />
+      <LineId Id="102" Count="0" />
+      <LineId Id="19" Count="0" />
+      <LineId Id="45" Count="0" />
+      <LineId Id="99" Count="0" />
+      <LineId Id="98" Count="0" />
+      <LineId Id="101" Count="0" />
+      <LineId Id="100" Count="0" />
       <LineId Id="24" Count="0" />
       <LineId Id="23" Count="0" />
     </LineIds>
