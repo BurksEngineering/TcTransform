@@ -17,6 +17,17 @@ END_VAR
     <Folder Name="Getters" Id="{d092d2bb-44ff-015b-23d0-0cd0696517ea}" />
     <Folder Name="Properties" Id="{cfe678ce-52d8-0d59-378d-9d7a9f94d78e}" />
     <Folder Name="Setters" Id="{476f1314-1760-0491-162a-ca22b126dafb}" />
+    <Method Name="Clear" Id="{7254746d-3de1-04ce-18da-bc7f1c4a8ac0}" FolderPath="Setters\">
+      <Declaration><![CDATA[METHOD PUBLIC Clear
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[Angles_[0] := 0;
+Angles_[1] := 0;
+Angles_[2] := 0;]]></ST>
+      </Implementation>
+    </Method>
     <Method Name="GetAngle" Id="{f6726e47-c5fb-0990-0956-4dd56856561f}" FolderPath="Getters\">
       <Declaration><![CDATA[METHOD PUBLIC  GetAngle : LREAL
 VAR_INPUT
@@ -302,8 +313,30 @@ RzRad := Rz;
 Sequence := Seq;]]></ST>
       </Implementation>
     </Method>
+    <Method Name="SetFromRMatrix" Id="{7694778b-f61e-0629-3603-059b826efea0}" FolderPath="Setters\">
+      <Declaration><![CDATA[METHOD PUBLIC SetFromRMatrix
+VAR_INPUT
+	M_R : RMatrix;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[Sequence := TaitBryanAngleSequence.ZYX;
+IF M_R.GetRC(0,0) = 0 AND M_R.GetRC(1,0) = 0 THEN
+	RzRad := 0;
+	RyRad := PI/2;
+	RxRad := ATAN2(M_R.GetRC(0,1),M_R.GetRC(1,1));
+ELSE
+	RzRad := ATAN2(M_R.GetRC(1,0),M_R.GETRC(0,0));
+	RyRad := ATAN2(-1*M_R.GetRC(2,0),SQRT(M_R.GetRC(0,0)*M_R.GetRC(0,0) + M_R.GetRC(1,0)*M_R.GetRC(1,0)));
+	RxRad := ATAN2(M_R.GetRC(2,1),M_R.GetRC(2,2));
+END_IF]]></ST>
+      </Implementation>
+    </Method>
     <LineIds Name="TaitBryanAngleOrientation">
       <LineId Id="9" Count="0" />
+    </LineIds>
+    <LineIds Name="TaitBryanAngleOrientation.Clear">
+      <LineId Id="5" Count="2" />
     </LineIds>
     <LineIds Name="TaitBryanAngleOrientation.GetAngle">
       <LineId Id="6" Count="1" />
@@ -389,6 +422,10 @@ Sequence := Seq;]]></ST>
     <LineIds Name="TaitBryanAngleOrientation.SetFromComponentsRad">
       <LineId Id="5" Count="0" />
       <LineId Id="10" Count="2" />
+    </LineIds>
+    <LineIds Name="TaitBryanAngleOrientation.SetFromRMatrix">
+      <LineId Id="6" Count="8" />
+      <LineId Id="5" Count="0" />
     </LineIds>
   </POU>
 </TcPlcObject>

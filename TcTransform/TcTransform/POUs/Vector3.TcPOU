@@ -78,7 +78,7 @@ GetReversed.Reverse();]]></ST>
       <Declaration><![CDATA[//Equivalent to Result := THIS x M_V
 METHOD PUBLIC GetVector3CrossProduct : Vector3
 VAR_INPUT
-	M_V : REFERENCE TO Vector3;
+	M_V : Vector3;
 END_VAR
 VAR
 	Vs : ARRAY[0..1] OF POINTER TO Matrix;
@@ -92,7 +92,7 @@ Vector_CrossProduct(GetVector3CrossProduct,Vs);]]></ST>
     <Method Name="GetVector3Difference" Id="{a8cdd625-bd8e-03da-2caa-b18f9cf600a9}" FolderPath="Getters\">
       <Declaration><![CDATA[METHOD PUBLIC GetVector3Difference : Vector3
 VAR_INPUT
-	M_V : REFERENCE TO Vector3;
+	M_V : Vector3;
 END_VAR
 ]]></Declaration>
       <Implementation>
@@ -123,7 +123,7 @@ GetVector3Scaled.Scale(Scalar);]]></ST>
     <Method Name="GetVector3Sum" Id="{e0925fa6-976a-4d00-803f-b43b1fcbfe73}" FolderPath="Getters\">
       <Declaration><![CDATA[METHOD PUBLIC GetVector3Sum : Vector3
 VAR_INPUT
-	M_V : REFERENCE TO Vector3;
+	M_V : Vector3;
 END_VAR
 ]]></Declaration>
       <Implementation>
@@ -166,8 +166,8 @@ END_VAR]]></Declaration>
     <Method Name="SetAsCrossProduct" Id="{a9c41c5c-c7b8-4bf5-93a5-afab6ffb1d24}" FolderPath="Setters\">
       <Declaration><![CDATA[METHOD PUBLIC SetAsCrossProduct
 VAR_INPUT
-	A : REFERENCE TO Vector3;
-	B : REFERENCE TO Vector3;
+	A : Vector3;
+	B : Vector3;
 END_VAR
 VAR
 	Vs : ARRAY[0..1] OF POINTER TO MATRIX;
@@ -225,7 +225,7 @@ END_VAR
     <Method Name="TransformBy" Id="{4c4fbd06-4f82-40bd-a719-ec5fe9b8c264}" FolderPath="Modifiers\">
       <Declaration><![CDATA[METHOD PUBLIC TransformBy
 VAR_INPUT
-	M_H : REFERENCE TO HMatrix;
+	M_H : HMatrix;
 END_VAR
 VAR
 	Temp : Vector3 := THIS^;
@@ -237,7 +237,7 @@ END_VAR]]></Declaration>
     <Method Name="TransformByReverse" Id="{ee7c6a48-3991-0e24-3de7-d7ea1e8d4e61}" FolderPath="Modifiers\">
       <Declaration><![CDATA[METHOD PUBLIC TransformByReverse
 VAR_INPUT
-	M_H : REFERENCE TO HMatrix;
+	M_H : HMatrix;
 END_VAR
 VAR
 	Temp : Vector3 := THIS^;

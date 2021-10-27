@@ -200,18 +200,14 @@ R1.SetFromAngle(PI/2,1);//90 deg rotation around Y
 VX.SetFromComponents(0,0,-1);
 VY.SetFromComponents(0,1,0);
 VZ.SetFromComponents(1,0,0);
-ResX := RX.SetFromVectorsYZ(VY,VZ);
-ResY := RY.SetFromVectorsXZ(VX,VZ);
-ResZ := RZ.SetFromVectorsXY(VX,VY);
-ResBad := Rbad.SetFromVectorsXY(VX,VX);
+RX.SetFromVectorsYZ(VY,VZ);
+RY.SetFromVectorsXZ(VX,VZ);
+RZ.SetFromVectorsXY(VX,VY);
+Rbad.SetFromVectorsXY(VX,VX);
 
 // @TEST-ASSERT
-AssertFalse(ResBad,'Parallel vectors should not have worked');
-AssertTrue(ResX,'RX not calculated successfully');
 AssertTrue(R1.IsNearlyEqual(RX,1E-9),'RX not calculated correctly');
-AssertTrue(ResY,'RY not calculated successfully');
 AssertTrue(R1.IsNearlyEqual(RY,1E-9),'RY not calculated correctly');
-AssertTrue(ResZ,'RZ not calculated successfully');
 AssertTrue(R1.IsNearlyEqual(RZ,1E-9),'RZ not calculated correctly');
 
 TEST_FINISHED();]]></ST>
@@ -328,12 +324,8 @@ TEST_FINISHED();]]></ST>
       <LineId Id="97" Count="0" />
       <LineId Id="44" Count="0" />
       <LineId Id="11" Count="0" />
-      <LineId Id="102" Count="0" />
-      <LineId Id="19" Count="0" />
       <LineId Id="45" Count="0" />
-      <LineId Id="99" Count="0" />
       <LineId Id="98" Count="0" />
-      <LineId Id="101" Count="0" />
       <LineId Id="100" Count="0" />
       <LineId Id="24" Count="0" />
       <LineId Id="23" Count="0" />

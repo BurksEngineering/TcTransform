@@ -31,6 +31,15 @@ AngleAccessor REF= AngleAccessor_;]]></ST>
         </Implementation>
       </Get>
     </Property>
+    <Method Name="Clear" Id="{9c200331-3bdf-0475-3aa4-c3ad3809eec0}" FolderPath="Setters\">
+      <Declaration><![CDATA[METHOD PUBLIC ABSTRACT Clear
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[]]></ST>
+      </Implementation>
+    </Method>
     <Property Name="DimensionAccessor" Id="{19c6e8e2-81df-0c00-1b2e-adecf6eb7a00}" FolderPath="Properties\">
       <Declaration><![CDATA[//DO NOT HANG ON TO THIS POINTER. if you do assignment it won't carry over!
 PROPERTY PUBLIC DimensionAccessor : REFERENCE TO MATRIX]]></Declaration>
@@ -144,6 +153,9 @@ END_VAR
     <LineIds Name="AngleSequenceOrientation.AngleAccessor.Get">
       <LineId Id="5" Count="0" />
       <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="AngleSequenceOrientation.Clear">
+      <LineId Id="5" Count="0" />
     </LineIds>
     <LineIds Name="AngleSequenceOrientation.DimensionAccessor.Get">
       <LineId Id="5" Count="0" />

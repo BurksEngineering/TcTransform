@@ -126,7 +126,7 @@ END_VAR
         <ST><![CDATA[TEST('WhenVectorTransformedExpectResult');
 
 // @TEST-RUN
-R1.SetFromAngle(PI/2,1);
+R1.SetFromAngle(PI/2,1);//90deg rotation around Y axis
 V1.X := 1;
 H1.SetFromComponents(R1,V1);
 V2.X := 1;

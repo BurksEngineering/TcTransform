@@ -44,9 +44,9 @@ END_VAR]]></Declaration>
     <Method Name="BuildFromUnitVectors" Id="{a254d824-c923-02fe-3444-221d65b9dea3}" FolderPath="Protected\">
       <Declaration><![CDATA[METHOD PROTECTED BuildFromUnitVectors
 VAR_INPUT
-	X : REFERENCE TO Vector3;
-	Y : REFERENCE TO Vector3;
-	Z : REFERENCE TO Vector3;
+	X : Vector3;
+	Y : Vector3;
+	Z : Vector3;
 END_VAR
 ]]></Declaration>
       <Implementation>
@@ -83,16 +83,7 @@ VAR_INPUT
 END_VAR
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[GetAngleSequence.Sequence := TaitBryanAngleSequence.ZYX;
-IF GetRC(0,0) = 0 OR GetRC(1,0) = 0 THEN
-	GetAngleSequence.RzRad := 0;
-	GetAngleSequence.RyRad := PI/2;
-	GetAngleSequence.RxRad := ATAN2(GetRC(0,1),GetRC(1,1));
-ELSE
-	GetAngleSequence.RzRad := ATAN2(GetRC(1,0),GETRC(0,0));
-	GetAngleSequence.RyRad := ATAN2(-1*GetRC(2,0),SQRT(GetRC(0,0)*GetRC(0,0) + GetRC(1,0)*GetRC(1,0)));
-	GetAngleSequence.RxRad := ATAN2(GetRC(2,1),GetRC(2,2));
-END_IF]]></ST>
+        <ST><![CDATA[GetAngleSequence.SetFromRMatrix(THIS^);]]></ST>
       </Implementation>
     </Method>
     <Method Name="GetI" Id="{015a9ab6-358d-413c-971b-ae0068470b6d}" FolderPath="Overrides\">
@@ -128,7 +119,7 @@ GetReversed.Reverse();]]></ST>
     <Method Name="GetRotatedRMatrix" Id="{af9e57ab-1242-4d2a-bea1-322f456421a1}" FolderPath="Getters\">
       <Declaration><![CDATA[METHOD PUBLIC GetRotatedRMatrix : RMatrix;
 VAR_INPUT
-	M_R : REFERENCE TO RMatrix;
+	M_R : RMatrix;
 END_VAR
 ]]></Declaration>
       <Implementation>
@@ -138,7 +129,7 @@ END_VAR
     <Method Name="GetRotatedRMatrixReverse" Id="{939de2bb-a599-0eff-3c8c-61d7b368e042}" FolderPath="Getters\">
       <Declaration><![CDATA[METHOD PUBLIC GetRotatedRMatrixReverse : RMatrix;
 VAR_INPUT
-	M_R : REFERENCE TO RMatrix;
+	M_R : RMatrix;
 END_VAR
 ]]></Declaration>
       <Implementation>
@@ -190,7 +181,7 @@ ReversedAccessor REF= ReversedAccessor_;]]></ST>
       <Declaration><![CDATA[//Equivalent to Matrix Operation 'THIS := M_R * THIS'
 METHOD PUBLIC RotateBy
 VAR_INPUT
-	M_R : REFERENCE TO RMatrix;
+	M_R : RMatrix;
 END_VAR
 VAR
 	Temp : RMatrix := THIS^;
@@ -203,7 +194,7 @@ END_VAR]]></Declaration>
       <Declaration><![CDATA[//Equivalent to Matrix Operation 'THIS := M_R * THIS'
 METHOD PUBLIC RotateByReverse
 VAR_INPUT
-	M_R : REFERENCE TO RMatrix;
+	M_R : RMatrix;
 END_VAR
 VAR
 	Temp : RMatrix := THIS^;
@@ -215,7 +206,7 @@ END_VAR]]></Declaration>
     <Method Name="RotateRMatrix" Id="{94514cca-3495-4305-a7b1-caebc38d65fe}" FolderPath="Helpers\">
       <Declaration><![CDATA[METHOD PUBLIC RotateRMatrix
 VAR_INPUT
-	R_From : REFERENCE TO RMatrix;
+	R_From : RMatrix;
 	R_To : REFERENCE TO RMatrix;
 END_VAR
 ]]></Declaration>
@@ -226,7 +217,7 @@ END_VAR
     <Method Name="RotateRMatrixReverse" Id="{bfdecbfc-95fe-03b6-2db4-7ab7c8d3a901}" FolderPath="Helpers\">
       <Declaration><![CDATA[METHOD PUBLIC RotateRMatrixReverse
 VAR_INPUT
-	R_From : REFERENCE TO RMatrix;
+	R_From : RMatrix;
 	R_To : REFERENCE TO RMatrix;
 END_VAR
 ]]></Declaration>
@@ -237,7 +228,7 @@ END_VAR
     <Method Name="RotateVector3" Id="{a1d2c87d-b7d5-4de7-bf30-62e9d26671c1}" FolderPath="Helpers\">
       <Declaration><![CDATA[METHOD PUBLIC RotateVector3
 VAR_INPUT
-	V_From : REFERENCE TO Vector3;
+	V_From : Vector3;
 	V_To : REFERENCE TO Vector3;
 END_VAR
 ]]></Declaration>
@@ -248,7 +239,7 @@ END_VAR
     <Method Name="RotateVector3Reverse" Id="{1ef31973-3fba-0dc5-1845-e8f8eb51537f}" FolderPath="Helpers\">
       <Declaration><![CDATA[METHOD PUBLIC RotateVector3Reverse
 VAR_INPUT
-	V_From : REFERENCE TO Vector3;
+	V_From : Vector3;
 	V_To : REFERENCE TO Vector3;
 END_VAR
 ]]></Declaration>
@@ -301,7 +292,7 @@ END_FOR]]></ST>
       </Implementation>
     </Method>
     <Method Name="SetFromVectorsXY" Id="{67916213-bf7a-0008-2fb8-686aa9434c37}" FolderPath="Setters\">
-      <Declaration><![CDATA[METHOD PUBLIC SetFromVectorsXY : BOOL
+      <Declaration><![CDATA[METHOD PUBLIC SetFromVectorsXY
 VAR_INPUT
 	X : VEctor3;//make a copy so we can nromalize
 	Y : Vector3;//make a copy so we can normalize
@@ -310,20 +301,17 @@ VAR
 	Z : Vector3;
 END_VAR]]></Declaration>
       <Implementation>
-        <ST><![CDATA[IF X.GetVector3DotProduct(Y) <> 0 THEN
-	LogWarning('%s: attempt to build RMatrix from non-perpendicular vectors');
-	SetFromVectorsXY := FALSE;
-	RETURN;
-END_IF
-SetFromVectorsXY := TRUE;
-X.Normalize();
+        <ST><![CDATA[X.Normalize();
 Y.Normalize();
+IF ABS(X.GetVector3DotProduct(Y)) > 1E-9 THEN
+	LogWarning('%s: the two vectors used to construct the coordinate system were not perpendicular');
+END_IF
 Z.SetAsCrossProduct(X,Y);
 BuildFromUnitVectors(X,Y,Z);]]></ST>
       </Implementation>
     </Method>
     <Method Name="SetFromVectorsXZ" Id="{017ae7e6-4063-04a5-1826-1e88b3a28ef6}" FolderPath="Setters\">
-      <Declaration><![CDATA[METHOD PUBLIC SetFromVectorsXZ : BOOL
+      <Declaration><![CDATA[METHOD PUBLIC SetFromVectorsXZ
 VAR_INPUT
 	X : VEctor3;//make a copy so we can nromalize
 	Z : Vector3;//make a copy so we can normalize
@@ -332,20 +320,17 @@ VAR
 	Y : Vector3;
 END_VAR]]></Declaration>
       <Implementation>
-        <ST><![CDATA[IF X.GetVector3DotProduct(Z) <> 0 THEN
-	LogWarning('%s: attempt to build RMatrix from non-perpendicular vectors');
-	SetFromVectorsXZ := FALSE;
-	RETURN;
-END_IF
-SetFromVectorsXZ := TRUE;
-X.Normalize();
+        <ST><![CDATA[X.Normalize();
 Z.Normalize();
+IF ABS(X.GetVector3DotProduct(Y)) > 1E-9 THEN
+	LogWarning('%s: the two vectors used to construct the coordinate system were not perpendicular');
+END_IF
 Y.SetAsCrossProduct(Z,X);
 BuildFromUnitVectors(X,Y,Z);]]></ST>
       </Implementation>
     </Method>
     <Method Name="SetFromVectorsYZ" Id="{489e46e9-01d1-003d-18db-ab7410c00b7f}" FolderPath="Setters\">
-      <Declaration><![CDATA[METHOD PUBLIC SetFromVectorsYZ : BOOL
+      <Declaration><![CDATA[METHOD PUBLIC SetFromVectorsYZ
 VAR_INPUT
 	Y : VEctor3;//make a copy so we can nromalize
 	Z : Vector3;//make a copy so we can normalize
@@ -354,14 +339,11 @@ VAR
 	X : Vector3;
 END_VAR]]></Declaration>
       <Implementation>
-        <ST><![CDATA[IF Y.GetVector3DotProduct(Z) <> 0 THEN
-	LogWarning('%s: attempt to build RMatrix from non-perpendicular vectors');
-	SetFromVectorsYZ := FALSE;
-	RETURN;
-END_IF
-SetFromVectorsYZ := TRUE;
-Y.Normalize();
+        <ST><![CDATA[Y.Normalize();
 Z.Normalize();
+IF ABS(X.GetVector3DotProduct(Y)) > 1E-9 THEN
+	LogWarning('%s: the two vectors used to construct the coordinate system were not perpendicular');
+END_IF
 X.SetAsCrossProduct(Y,Z);
 BuildFromUnitVectors(X,Y,Z);]]></ST>
       </Implementation>
@@ -399,13 +381,6 @@ END_IF]]></ST>
       <LineId Id="7" Count="1" />
     </LineIds>
     <LineIds Name="RMatrix.GetAngleSequence">
-      <LineId Id="9" Count="0" />
-      <LineId Id="5" Count="0" />
-      <LineId Id="7" Count="0" />
-      <LineId Id="12" Count="1" />
-      <LineId Id="10" Count="0" />
-      <LineId Id="14" Count="1" />
-      <LineId Id="11" Count="0" />
       <LineId Id="8" Count="0" />
     </LineIds>
     <LineIds Name="RMatrix.GetI">
@@ -472,33 +447,23 @@ END_IF]]></ST>
       <LineId Id="15" Count="0" />
     </LineIds>
     <LineIds Name="RMatrix.SetFromVectorsXY">
-      <LineId Id="5" Count="0" />
-      <LineId Id="8" Count="0" />
-      <LineId Id="10" Count="1" />
-      <LineId Id="9" Count="0" />
-      <LineId Id="13" Count="0" />
       <LineId Id="12" Count="0" />
       <LineId Id="14" Count="0" />
+      <LineId Id="26" Count="2" />
       <LineId Id="17" Count="1" />
     </LineIds>
     <LineIds Name="RMatrix.SetFromVectorsXZ">
-      <LineId Id="5" Count="0" />
-      <LineId Id="8" Count="0" />
-      <LineId Id="10" Count="1" />
-      <LineId Id="9" Count="0" />
-      <LineId Id="13" Count="0" />
       <LineId Id="12" Count="0" />
       <LineId Id="14" Count="0" />
+      <LineId Id="27" Count="1" />
+      <LineId Id="26" Count="0" />
       <LineId Id="17" Count="1" />
     </LineIds>
     <LineIds Name="RMatrix.SetFromVectorsYZ">
-      <LineId Id="5" Count="0" />
-      <LineId Id="8" Count="0" />
-      <LineId Id="10" Count="1" />
-      <LineId Id="9" Count="0" />
-      <LineId Id="13" Count="0" />
       <LineId Id="12" Count="0" />
       <LineId Id="14" Count="0" />
+      <LineId Id="27" Count="1" />
+      <LineId Id="26" Count="0" />
       <LineId Id="17" Count="1" />
     </LineIds>
     <LineIds Name="RMatrix.SetI">

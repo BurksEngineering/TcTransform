@@ -27,7 +27,6 @@ VAR
 	Data : ARRAY[0..cRows*cCols-1] OF LREAL;
 	RMatrixAccessor_ : SubMatrixAccessor;//reinitialize every use (via property) because := copying will destroy the pointer
 	Vector3Accessor_ : SubMatrixAccessor;//reinitialize every use (via property) because := copying will destroy the pointer
-	ReversedAccessor_ : HMatrixReverseAccessor;//reinitialize every use (via property) because := copying will destroy the pointer
 END_VAR
 VAR CONSTANT
 	cRows : UINT := 4;
@@ -89,7 +88,8 @@ VAR_INPUT
 END_VAR
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[GetReversed.CopyFrom(ReversedAccessor);]]></ST>
+        <ST><![CDATA[GetReversed.CopyFrom(THIS^);
+GetReversed.Reverse();]]></ST>
       </Implementation>
     </Method>
     <Method Name="GetTransformedHMatrix" Id="{4271c121-57f0-4c85-aab4-d2a88480e9c7}" FolderPath="Getters\">
@@ -107,7 +107,8 @@ END_VAR
 VAR_INPUT
 	M_H : HMatrix;
 END_VAR
-]]></Declaration>
+VAR
+END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[TransformHMatrixReverse(M_H,GetTransformedHMatrixReverse);]]></ST>
       </Implementation>
@@ -149,7 +150,7 @@ END_VAR]]></Declaration>
     <Method Name="OffsetBy" Id="{92757271-1de1-0b66-10b3-677e91f0f33b}" FolderPath="Modifiers\">
       <Declaration><![CDATA[METHOD PUBLIC OffsetBy
 VAR_INPUT
-	In : REFERENCE TO Vector3;
+	In : Vector3;
 END_VAR
 VAR
 	
@@ -163,24 +164,15 @@ END_VAR]]></Declaration>
 VAR_INPUT
 END_VAR
 VAR
+	Vtemp : Vector3;
 END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[Matrix_TransposeSquare(RMatrixAccessor);
+Vtemp := Vector3Component;
+Matrix_Product(RMatrixAccessor,Vtemp,Vector3Accessor);
 Matrix_Scale(Vector3Accessor,-1);]]></ST>
       </Implementation>
     </Method>
-    <Property Name="ReversedAccessor" Id="{0fdce700-4608-05d8-3157-7c8b37c21c47}" FolderPath="Properties\">
-      <Declaration><![CDATA[PROPERTY PROTECTED ReversedAccessor : REFERENCE TO Matrix]]></Declaration>
-      <Get Name="Get" Id="{503bdd9f-d47a-074f-23ea-e99adb92d49c}">
-        <Declaration><![CDATA[VAR
-END_VAR
-]]></Declaration>
-        <Implementation>
-          <ST><![CDATA[ReversedAccessor_.Init(THIS^);
-ReversedAccessor REF= ReversedAccessor_;]]></ST>
-        </Implementation>
-      </Get>
-    </Property>
     <Property Name="RMatrixAccessor" Id="{349ff897-23e1-0157-003a-26eeaeff50fc}" FolderPath="Properties\">
       <Declaration><![CDATA[//destroy immediately after use because if you ever := copy this FB the pointer within the accessor will still point to the old copy!!!!
 PROPERTY PROTECTED RMatrixAccessor : REFERENCE TO SubMatrixAccessor]]></Declaration>
@@ -216,7 +208,7 @@ END_VAR
     <Method Name="RotateBy" Id="{a0064057-196b-0b45-2bd9-db2dd85c3ab4}" FolderPath="Modifiers\">
       <Declaration><![CDATA[METHOD PUBLIC RotateBy
 VAR_INPUT
-	In : REFERENCE TO RMatrix;
+	In : RMatrix;
 END_VAR
 VAR
 	NewR : RMatrix;
@@ -230,7 +222,7 @@ RMatrixAccessor.CopyFrom(NewR);]]></ST>
     <Method Name="RotateByReverse" Id="{2cd92100-7efa-090c-2fee-f63ba92e796f}" FolderPath="Modifiers\">
       <Declaration><![CDATA[METHOD PUBLIC RotateByReverse
 VAR_INPUT
-	In : REFERENCE TO RMatrix;
+	In : RMatrix;
 END_VAR
 VAR
 	InRev : RMatrix;
@@ -246,8 +238,8 @@ RMatrixAccessor.CopyFrom(TempRes);]]></ST>
     <Method Name="SetFromComponents" Id="{286221f7-fde8-44af-bd5b-25df89e6cdd8}" FolderPath="Setters\">
       <Declaration><![CDATA[METHOD PUBLIC SetFromComponents
 VAR_INPUT
-	M_R : REFERENCE TO RMatrix;
-	M_V : REFERENCE TO Vector3;
+	M_R : RMatrix;
+	M_V : Vector3;
 END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[Clear();
@@ -279,7 +271,7 @@ END_IF]]></ST>
       <Declaration><![CDATA[//Equivalent to Matrix Operation 'THIS := M_H * THIS'
 METHOD PUBLIC TransformBy
 VAR_INPUT
-	M_H : REFERENCE TO HMatrix;
+	M_H : HMatrix;
 END_VAR
 VAR
 	Temp : HMatrix := THIS^;
@@ -292,7 +284,7 @@ END_VAR]]></Declaration>
       <Declaration><![CDATA[//Equivalent to Matrix Operation 'THIS := M_H * THIS'
 METHOD PUBLIC TransformByReverse
 VAR_INPUT
-	M_H : REFERENCE TO HMatrix;
+	M_H : HMatrix;
 END_VAR
 VAR
 	Temp : HMatrix := THIS^;
@@ -304,7 +296,7 @@ END_VAR]]></Declaration>
     <Method Name="TransformHMatrix" Id="{a23c2f95-8204-479c-b1b3-1469f769c24d}" FolderPath="Helpers\">
       <Declaration><![CDATA[METHOD PUBLIC TransformHMatrix
 VAR_INPUT
-	H_From : REFERENCE TO HMatrix;
+	H_From : HMatrix;
 	H_To : REFERENCE TO HMatrix;
 END_VAR
 ]]></Declaration>
@@ -315,18 +307,21 @@ END_VAR
     <Method Name="TransformHMatrixReverse" Id="{4e136040-461c-0943-30ee-eb08c7ac00e6}" FolderPath="Helpers\">
       <Declaration><![CDATA[METHOD PUBLIC TransformHMatrixReverse
 VAR_INPUT
-	H_From : REFERENCE TO HMatrix;
+	H_From : HMatrix;
 	H_To : REFERENCE TO HMatrix;
 END_VAR
-]]></Declaration>
+VAR
+	Temp : HMatrix;
+END_VAR]]></Declaration>
       <Implementation>
-        <ST><![CDATA[Matrix_Product(ReversedAccessor,H_From,H_To);]]></ST>
+        <ST><![CDATA[Temp := GetReversed();
+Matrix_Product(TEmp,H_From,H_To);]]></ST>
       </Implementation>
     </Method>
     <Method Name="TransformVector3" Id="{4e2cbfad-e142-4a26-b337-1b56f8008991}" FolderPath="Helpers\">
       <Declaration><![CDATA[METHOD PUBLIC TransformVector3
 VAR_INPUT
-	V_From : REFERENCE TO Vector3;
+	V_From : Vector3;
 	V_To : REFERENCE TO Vector3;
 END_VAR
 VAR
@@ -352,12 +347,14 @@ V_To.FillFrom(V4_out);
     <Method Name="TransformVector3Reverse" Id="{9d331884-fe0c-0ad0-0339-39637474496c}" FolderPath="Helpers\">
       <Declaration><![CDATA[METHOD PUBLIC TransformVector3Reverse
 VAR_INPUT
-	V_From : REFERENCE TO Vector3;
+	V_From : Vector3;
 	V_To : REFERENCE TO Vector3;
 END_VAR
 VAR
 	V4_in : ExternalStaticMatrix;
 	V4_Data_in : ARRAY[0..3] OF LREAL;
+	
+	Temp : HMatrix;
 	
 	V4_out : ExternalStaticMatrix;
 	V4_Data_out : ARRAY[0..3] OF LREAL;
@@ -369,7 +366,8 @@ V4_in.SetI(3,1);
 
 V4_out.Init(ADR(V4_Data_out),4,1);
 
-Matrix_Product(ReversedAccessor,V4_in,V4_out);
+Temp := GetReversed();
+Matrix_Product(temp,V4_in,V4_out);
 
 V_To.FillFrom(V4_out);
 ]]></ST>
@@ -427,6 +425,7 @@ END_VAR
     </LineIds>
     <LineIds Name="HMatrix.GetReversed">
       <LineId Id="10" Count="0" />
+      <LineId Id="14" Count="0" />
     </LineIds>
     <LineIds Name="HMatrix.GetTransformedHMatrix">
       <LineId Id="5" Count="0" />
@@ -447,11 +446,9 @@ END_VAR
     </LineIds>
     <LineIds Name="HMatrix.Reverse">
       <LineId Id="24" Count="0" />
-      <LineId Id="30" Count="0" />
-    </LineIds>
-    <LineIds Name="HMatrix.ReversedAccessor.Get">
-      <LineId Id="2" Count="0" />
-      <LineId Id="5" Count="0" />
+      <LineId Id="37" Count="0" />
+      <LineId Id="35" Count="0" />
+      <LineId Id="38" Count="0" />
     </LineIds>
     <LineIds Name="HMatrix.RMatrixAccessor.Get">
       <LineId Id="2" Count="0" />
@@ -494,6 +491,7 @@ END_VAR
       <LineId Id="5" Count="0" />
     </LineIds>
     <LineIds Name="HMatrix.TransformHMatrixReverse">
+      <LineId Id="13" Count="0" />
       <LineId Id="5" Count="0" />
     </LineIds>
     <LineIds Name="HMatrix.TransformVector3">
@@ -501,7 +499,9 @@ END_VAR
       <LineId Id="5" Count="0" />
     </LineIds>
     <LineIds Name="HMatrix.TransformVector3Reverse">
-      <LineId Id="20" Count="8" />
+      <LineId Id="20" Count="4" />
+      <LineId Id="42" Count="0" />
+      <LineId Id="25" Count="3" />
       <LineId Id="5" Count="0" />
     </LineIds>
     <LineIds Name="HMatrix.Vector3Accessor.Get">

@@ -17,6 +17,17 @@ END_VAR
     <Folder Name="Getters" Id="{91c868c0-17e3-03c8-3247-0f5dcd5f58b0}" />
     <Folder Name="Properties" Id="{b3a14366-a718-0072-0ea3-e15a9f6a7faf}" />
     <Folder Name="Setters" Id="{bf9614b6-5791-052d-36d3-a6fecf42a028}" />
+    <Method Name="Clear" Id="{9715391d-d57d-0b5c-2943-b0eac01ec440}" FolderPath="Setters\">
+      <Declaration><![CDATA[METHOD PUBLIC Clear
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[Angles_[0] := 0;
+Angles_[1] := 0;
+Angles_[2] := 0;]]></ST>
+      </Implementation>
+    </Method>
     <Method Name="GetAngle" Id="{58f01ac2-632f-0309-3608-db069ea93297}" FolderPath="Getters\">
       <Declaration><![CDATA[METHOD PUBLIC  GetAngle : LREAL
 VAR_INPUT
@@ -288,6 +299,9 @@ Sequence := Seq;]]></ST>
     </Method>
     <LineIds Name="EulerAngleOrientation">
       <LineId Id="9" Count="0" />
+    </LineIds>
+    <LineIds Name="EulerAngleOrientation.Clear">
+      <LineId Id="5" Count="2" />
     </LineIds>
     <LineIds Name="EulerAngleOrientation.GetAngle">
       <LineId Id="6" Count="1" />
