@@ -28,6 +28,18 @@ Angles_[1] := 0;
 Angles_[2] := 0;]]></ST>
       </Implementation>
     </Method>
+    <Method Name="CopyFrom" Id="{75d1fa04-b22c-0221-1769-0cfaa8bde191}" FolderPath="Setters\">
+      <Declaration><![CDATA[METHOD PUBLIC CopyFrom
+VAR_INPUT
+	O : EulerAngleOrientation;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[CLEAR();
+Sequence := O.Sequence;
+AngleAccessor.CopyFrom(O.AngleAccessor);]]></ST>
+      </Implementation>
+    </Method>
     <Method Name="GetAngle" Id="{58f01ac2-632f-0309-3608-db069ea93297}" FolderPath="Getters\">
       <Declaration><![CDATA[METHOD PUBLIC  GetAngle : LREAL
 VAR_INPUT
@@ -302,6 +314,10 @@ Sequence := Seq;]]></ST>
     </LineIds>
     <LineIds Name="EulerAngleOrientation.Clear">
       <LineId Id="5" Count="2" />
+    </LineIds>
+    <LineIds Name="EulerAngleOrientation.CopyFrom">
+      <LineId Id="7" Count="1" />
+      <LineId Id="5" Count="0" />
     </LineIds>
     <LineIds Name="EulerAngleOrientation.GetAngle">
       <LineId Id="6" Count="1" />

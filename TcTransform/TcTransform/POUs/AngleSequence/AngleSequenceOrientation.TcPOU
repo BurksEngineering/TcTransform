@@ -125,6 +125,17 @@ END_VAR
         <ST><![CDATA[IsEqualSize := Length = O.Length;]]></ST>
       </Implementation>
     </Method>
+    <Method Name="IsNearlyEqual" Id="{dd99535a-5396-065a-38bf-b136c9ff15a5}" FolderPath="Comparators\">
+      <Declaration><![CDATA[METHOD PUBLIC IsNearlyEqual : BOOL
+VAR_INPUT
+	O : REFERENCE TO AngleSequenceOrientation;
+	Precision : LREAL;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IsNearlyEqual := IsEqualDimension(O) AND AngleAccessor.IsNearlyEqual(O.AngleAccessor, Precision);]]></ST>
+      </Implementation>
+    </Method>
     <Property Name="Length" Id="{1b4e06f1-7093-0d82-322d-4e1a917abefc}" FolderPath="Properties\">
       <Declaration><![CDATA[PROPERTY PUBLIC ABSTRACT Length : UINT]]></Declaration>
       <Get Name="Get" Id="{44c34134-38cd-0cca-0b4b-d348b80671dc}">
@@ -182,6 +193,9 @@ END_VAR
       <LineId Id="5" Count="0" />
     </LineIds>
     <LineIds Name="AngleSequenceOrientation.IsEqualSize">
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="AngleSequenceOrientation.IsNearlyEqual">
       <LineId Id="5" Count="0" />
     </LineIds>
     <LineIds Name="AngleSequenceOrientation.Length.Get">

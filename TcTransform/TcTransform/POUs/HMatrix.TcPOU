@@ -62,6 +62,15 @@ END_VAR
 Clear();]]></ST>
       </Implementation>
     </Method>
+    <Method Name="GetAngleSequenceComponent" Id="{15089c7f-72c5-0c91-19ab-b6f0b200086b}" FolderPath="Getters\">
+      <Declaration><![CDATA[METHOD PUBLIC GetAngleSequenceComponent : TaitBryanAngleOrientation
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[GetAngleSequenceComponent.SetFromRMatrix(RMatrixComponent);]]></ST>
+      </Implementation>
+    </Method>
     <Method Name="GetI" Id="{1b9c3781-9f28-43c2-9149-9825d94a73a7}" FolderPath="Overrides\">
       <Declaration><![CDATA[//Gets the value of the element in this matrix at the supplied location as if the elements were stored in a 1D row-major array
 //:Prerequisites:
@@ -93,7 +102,10 @@ GetReversed.Reverse();]]></ST>
       </Implementation>
     </Method>
     <Method Name="GetTransformedHMatrix" Id="{4271c121-57f0-4c85-aab4-d2a88480e9c7}" FolderPath="Getters\">
-      <Declaration><![CDATA[METHOD PUBLIC GetTransformedHMatrix : HMatrix
+      <Declaration><![CDATA[//Equivalent to matrix multiplication: RETVAL = THIS * M_H
+//CinA := BinA.GetTransformedHMatrix(CinB)
+//CinA := BinA.GetTransformedHMatrix(BinC.GetReversed())
+METHOD PUBLIC GetTransformedHMatrix : HMatrix
 VAR_INPUT
 	M_H : HMatrix;
 END_VAR
@@ -103,7 +115,10 @@ END_VAR
       </Implementation>
     </Method>
     <Method Name="GetTransformedHMatrixReverse" Id="{ac8d72ea-2df2-08de-22b6-7cdac41ddb40}" FolderPath="Getters\">
-      <Declaration><![CDATA[METHOD PUBLIC GetTransformedHMatrixReverse : HMatrix
+      <Declaration><![CDATA[//Equivalent to matrix multiplication: RETVAL = THIS' * M_H
+//CinA := AinB.GetTransformedHMatrixReverse(CinB)
+//CinA := AinB.GetTransformedHMatrixReverse(BinC.GetReversed())
+METHOD PUBLIC GetTransformedHMatrixReverse : HMatrix
 VAR_INPUT
 	M_H : HMatrix;
 END_VAR
@@ -294,7 +309,10 @@ END_VAR]]></Declaration>
       </Implementation>
     </Method>
     <Method Name="TransformHMatrix" Id="{a23c2f95-8204-479c-b1b3-1469f769c24d}" FolderPath="Helpers\">
-      <Declaration><![CDATA[METHOD PUBLIC TransformHMatrix
+      <Declaration><![CDATA[//Equivalent to matrix multiplication: H_To = THIS * H_From
+//BinA.TransformHMatrix(CinB, out => CinA)
+//BinA.TransformHMatrix(BinC.GetReversed(), out => CinA)
+METHOD PUBLIC TransformHMatrix
 VAR_INPUT
 	H_From : HMatrix;
 	H_To : REFERENCE TO HMatrix;
@@ -305,7 +323,10 @@ END_VAR
       </Implementation>
     </Method>
     <Method Name="TransformHMatrixReverse" Id="{4e136040-461c-0943-30ee-eb08c7ac00e6}" FolderPath="Helpers\">
-      <Declaration><![CDATA[METHOD PUBLIC TransformHMatrixReverse
+      <Declaration><![CDATA[//Equivalent to matrix multiplication: H_To = THIS' * H_From
+//AinB.TransformHMatrixReverse(CinB, out => CinA)
+//AinB.TransformHMatrixReverse(BinC.GetReversed(), out => CinA)
+METHOD PUBLIC TransformHMatrixReverse
 VAR_INPUT
 	H_From : HMatrix;
 	H_To : REFERENCE TO HMatrix;
@@ -414,6 +435,9 @@ END_VAR
     <LineIds Name="HMatrix.FB_init">
       <LineId Id="15" Count="0" />
       <LineId Id="8" Count="0" />
+    </LineIds>
+    <LineIds Name="HMatrix.GetAngleSequenceComponent">
+      <LineId Id="5" Count="0" />
     </LineIds>
     <LineIds Name="HMatrix.GetI">
       <LineId Id="5" Count="0" />

@@ -18,7 +18,7 @@
     <Company>Burks Engineering</Company>
     <Released>false</Released>
     <Title>TcTransform</Title>
-    <ProjectVersion>0.3.24</ProjectVersion>
+    <ProjectVersion>0.3.32</ProjectVersion>
     <LibraryCategories>
       <LibraryCategory xmlns="">
         <Id>{d5875a41-817d-44f3-8af7-6c59eaddc95f}</Id>
@@ -79,6 +79,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="POUs\AngleSequence\EulerAngleOrientation.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="POUs\AngleSequence\IAngleSequenceOrientation.TcIO">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="POUs\AngleSequence\MatrixAccessors\AngleSequenceAccessor.TcPOU">

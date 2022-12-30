@@ -28,6 +28,18 @@ Angles_[1] := 0;
 Angles_[2] := 0;]]></ST>
       </Implementation>
     </Method>
+    <Method Name="CopyFrom" Id="{1c8b9ce8-0ec4-05c0-00eb-59e536dfe04f}" FolderPath="Setters\">
+      <Declaration><![CDATA[METHOD PUBLIC CopyFrom
+VAR_INPUT
+	O : TaitBryanAngleOrientation;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[Clear();
+Sequence := O.Sequence;
+AngleAccessor.CopyFrom(O.AngleAccessor);]]></ST>
+      </Implementation>
+    </Method>
     <Method Name="GetAngle" Id="{f6726e47-c5fb-0990-0956-4dd56856561f}" FolderPath="Getters\">
       <Declaration><![CDATA[METHOD PUBLIC  GetAngle : LREAL
 VAR_INPUT
@@ -337,6 +349,10 @@ END_IF]]></ST>
     </LineIds>
     <LineIds Name="TaitBryanAngleOrientation.Clear">
       <LineId Id="5" Count="2" />
+    </LineIds>
+    <LineIds Name="TaitBryanAngleOrientation.CopyFrom">
+      <LineId Id="7" Count="1" />
+      <LineId Id="5" Count="0" />
     </LineIds>
     <LineIds Name="TaitBryanAngleOrientation.GetAngle">
       <LineId Id="6" Count="1" />
