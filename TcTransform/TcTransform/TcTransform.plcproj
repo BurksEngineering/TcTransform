@@ -18,7 +18,7 @@
     <Company>Burks Engineering</Company>
     <Released>false</Released>
     <Title>TcTransform</Title>
-    <ProjectVersion>0.3.32</ProjectVersion>
+    <ProjectVersion>0.3.33</ProjectVersion>
     <LibraryCategories>
       <LibraryCategory xmlns="">
         <Id>{d5875a41-817d-44f3-8af7-6c59eaddc95f}</Id>
@@ -119,7 +119,7 @@
   </ItemGroup>
   <ItemGroup>
     <PlaceholderResolution Include="TcMatrix">
-      <Resolution>TcMatrix, 1.2.14 (Burks Engineering)</Resolution>
+      <Resolution>TcMatrix, 1.4.2 (Burks Engineering)</Resolution>
     </PlaceholderResolution>
   </ItemGroup>
   <ProjectExtensions>
