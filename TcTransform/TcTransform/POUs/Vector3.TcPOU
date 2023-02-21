@@ -142,7 +142,7 @@ END_VAR
     <Method Name="RotateBy" Id="{59fbbe95-d495-4fad-b321-004c904c3351}" FolderPath="Modifiers\">
       <Declaration><![CDATA[METHOD PUBLIC RotateBy
 VAR_INPUT
-	M_R : REFERENCE TO RMAtrix;
+	M_R : RMAtrix;
 END_VAR
 VAR
 	Temp : Vector3 := THIS^;
@@ -154,7 +154,7 @@ END_VAR]]></Declaration>
     <Method Name="RotateByReverse" Id="{13df80b2-b918-02d1-1a34-9e75c60103ea}" FolderPath="Modifiers\">
       <Declaration><![CDATA[METHOD PUBLIC RotateByReverse
 VAR_INPUT
-	M_R : REFERENCE TO RMAtrix;
+	M_R : RMAtrix;
 END_VAR
 VAR
 	Temp : Vector3 := THIS^;
