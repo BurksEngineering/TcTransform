@@ -79,14 +79,9 @@ GetReversed.Reverse();]]></ST>
 METHOD PUBLIC GetVector3CrossProduct : Vector3
 VAR_INPUT
 	M_V : Vector3;
-END_VAR
-VAR
-	Vs : ARRAY[0..1] OF POINTER TO Matrix;
 END_VAR]]></Declaration>
       <Implementation>
-        <ST><![CDATA[Vs[0] := THIS;
-Vs[1] := ADR(M_V);
-Vector_CrossProduct(GetVector3CrossProduct,Vs);]]></ST>
+        <ST><![CDATA[Vector3_CrossProduct(This^,M_V,GetVector3CrossProduct);]]></ST>
       </Implementation>
     </Method>
     <Method Name="GetVector3Difference" Id="{a8cdd625-bd8e-03da-2caa-b18f9cf600a9}" FolderPath="Getters\">
@@ -173,10 +168,7 @@ VAR
 	Vs : ARRAY[0..1] OF POINTER TO MATRIX;
 END_VAR]]></Declaration>
       <Implementation>
-        <ST><![CDATA[Vs[0] := ADR(A);
-Vs[1] := ADR(B);
-
-Vector_CrossProduct(THIS^,Vs);]]></ST>
+        <ST><![CDATA[Vector3_CrossProduct(A,B,This^);]]></ST>
       </Implementation>
     </Method>
     <Method Name="SetFromComponents" Id="{cfb8f7f5-c7d4-45fd-bf85-30fd34a78de9}" FolderPath="Setters\">
@@ -321,7 +313,6 @@ END_VAR
       <LineId Id="5" Count="1" />
     </LineIds>
     <LineIds Name="Vector3.GetVector3CrossProduct">
-      <LineId Id="17" Count="1" />
       <LineId Id="10" Count="0" />
     </LineIds>
     <LineIds Name="Vector3.GetVector3Difference">
@@ -346,9 +337,6 @@ END_VAR
       <LineId Id="12" Count="0" />
     </LineIds>
     <LineIds Name="Vector3.SetAsCrossProduct">
-      <LineId Id="10" Count="0" />
-      <LineId Id="12" Count="0" />
-      <LineId Id="11" Count="0" />
       <LineId Id="5" Count="0" />
     </LineIds>
     <LineIds Name="Vector3.SetFromComponents">

@@ -13,6 +13,7 @@ END_VAR
       <ST><![CDATA[WhenSetExpectValuesRetained();
 WhenReversedExpectValuesReversed();
 WhenCrossedExpectVectorOrthogonal();
+WhenParallelCrossedExpectCleared();
 WhenDottedExpectResult();]]></ST>
     </Implementation>
     <Method Name="WhenCrossedExpectVectorOrthogonal" Id="{77217c58-9dca-41bd-bf6e-dd652b36e1c1}">
@@ -60,6 +61,30 @@ Dot := V1.GetVector3DotProduct(V2);
 
 // @TEST-ASSERT
 AssertTrue(Dot = 14,'dot product did not work');
+
+TEST_FINISHED();]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="WhenParallelCrossedExpectCleared" Id="{26b6e7b2-0fd1-05df-0e33-19e6d7a942cd}">
+      <Declaration><![CDATA[METHOD PRIVATE WhenParallelCrossedExpectCleared
+VAR_INPUT
+END_VAR
+VAR
+	V1 : Vector3;
+	V2 : Vector3;
+	V3 : Vector3;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[TEST('WhenParallelCrossedExpectCleared');
+
+// @TEST-RUN
+V1.SetFromComponents(1,0,0);
+V2.SetFromComponents(1,0,0);
+V3 := V1.GetVector3CrossProduct(V2);
+
+// @TEST-ASSERT
+AssertTrue(V3.IsCleared,'parallel cross product is not zero');
 
 TEST_FINISHED();]]></ST>
       </Implementation>
@@ -117,7 +142,9 @@ TEST_FINISHED();]]></ST>
       </Implementation>
     </Method>
     <LineIds Name="FB_Vector3_Test">
-      <LineId Id="9" Count="3" />
+      <LineId Id="9" Count="2" />
+      <LineId Id="20" Count="0" />
+      <LineId Id="12" Count="0" />
     </LineIds>
     <LineIds Name="FB_Vector3_Test.WhenCrossedExpectVectorOrthogonal">
       <LineId Id="5" Count="0" />
@@ -133,6 +160,19 @@ TEST_FINISHED();]]></ST>
       <LineId Id="23" Count="0" />
     </LineIds>
     <LineIds Name="FB_Vector3_Test.WhenDottedExpectResult">
+      <LineId Id="5" Count="0" />
+      <LineId Id="7" Count="0" />
+      <LineId Id="6" Count="0" />
+      <LineId Id="10" Count="0" />
+      <LineId Id="17" Count="0" />
+      <LineId Id="21" Count="0" />
+      <LineId Id="18" Count="0" />
+      <LineId Id="11" Count="0" />
+      <LineId Id="19" Count="0" />
+      <LineId Id="24" Count="0" />
+      <LineId Id="23" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_Vector3_Test.WhenParallelCrossedExpectCleared">
       <LineId Id="5" Count="0" />
       <LineId Id="7" Count="0" />
       <LineId Id="6" Count="0" />

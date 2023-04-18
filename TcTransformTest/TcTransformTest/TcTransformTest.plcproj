@@ -75,7 +75,7 @@
   </ItemGroup>
   <ItemGroup>
     <PlaceholderResolution Include="TcMatrix">
-      <Resolution>TcMatrix, * (Burks Engineering)</Resolution>
+      <Resolution>TcMatrix, 1.4.3 (Burks Engineering)</Resolution>
     </PlaceholderResolution>
     <PlaceholderResolution Include="TcUnit">
       <Resolution>TcUnit, * (www.tcunit.org)</Resolution>

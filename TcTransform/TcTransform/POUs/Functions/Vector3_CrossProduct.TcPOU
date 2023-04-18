@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
+  <POU Name="Vector3_CrossProduct" Id="{990310ce-9c42-010b-20d8-ae0eb67dd696}" SpecialFunc="None">
+    <Declaration><![CDATA[//Specialized, optimized version of the generic vector cross product specifically for vector 3
+//Thanks to captain-yoshi for the algorithm and idea
+//see https://github.com/BurksEngineering/TcTransform/issues/4
+FUNCTION Vector3_CrossProduct
+VAR_IN_OUT CONSTANT
+    A : Vector3;
+    B : Vector3;
+END_VAR
+VAR_IN_OUT
+    Res : Vector3;
+END_VAR]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[// Complexity : 6M+3A
+Res.SetI(0, A.GetI(1)*B.GetI(2) - A.GetI(2)*B.GetI(1));
+Res.SetI(1, A.GetI(2)*B.GetI(0) - A.GetI(0)*B.GetI(2));
+Res.SetI(2, A.GetI(0)*B.GetI(1) - A.GetI(1)*B.GetI(0));]]></ST>
+    </Implementation>
+    <LineIds Name="Vector3_CrossProduct">
+      <LineId Id="30" Count="2" />
+      <LineId Id="7" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>
