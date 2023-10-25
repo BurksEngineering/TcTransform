@@ -18,6 +18,7 @@ WhenVectorRotatedExpectResult();
 WhenReversedExpectOpposite();
 WhenSetFromVectorsExpectResult();
 WhenPostMultipliedByRMatrixExpectResult();
+WhenPostMultipliedByVector3ExpectResult();]]></ST>
     </Implementation>
     <Method Name="WhenPostMultipliedByRMatrixExpectResult" Id="{bdbe93cc-2d4c-0bb5-2025-727dca69fa9f}">
       <Declaration><![CDATA[METHOD PRIVATE WhenPostMultipliedByRMatrixExpectResult
@@ -56,6 +57,37 @@ AssertEquals_LREAL(0.5000000000000001, R3.GetI(8), Delta, 'R1*R2 is not correct'
 TEST_FINISHED();]]></ST>
       </Implementation>
     </Method>
+    <Method Name="WhenPostMultipliedByVector3ExpectResult" Id="{ae31952a-f0a4-0385-2777-6375b894da5d}">
+      <Declaration><![CDATA[METHOD PRIVATE WhenPostMultipliedByVector3ExpectResult
+VAR_INPUT
+END_VAR
+VAR
+	R1 : RMatrix;
+	V1 : Vector3;
+    VRes : Vector3;
+
+    Delta : LREAL := 1E-09;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[TEST('WhenPostMultipliedByVector3ExpectResult');
+
+// @TEST-RUN
+R1.SetFromAngle(-PI/2,0);
+R1.SetFromAngle( PI/2,1);
+R1.SetFromAngle(-PI/4,2);
+
+V1.SetI(0, -3);
+V1.SetI(1, 7.5);
+V1.SetI(2, -0.6);
+
+RMatrix_Vector3_Product(R1, V1, VRes);
+
+// @TEST-ASSERT
+AssertEquals_LREAL(3.18198051533946345, VRes.GetI(0), Delta, 'R1*V1 is not correct');
+AssertEquals_LREAL(7.4246212024587495, VRes.GetI(1), Delta, 'R1*V1 is not correct');
+AssertEquals_LREAL(-0.6, VRes.GetI(2), Delta, 'R1*V1 is not correct');
+
 TEST_FINISHED();]]></ST>
       </Implementation>
     </Method>

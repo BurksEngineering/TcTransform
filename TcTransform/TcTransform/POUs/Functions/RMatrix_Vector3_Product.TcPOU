@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="RMatrix_Vector3_Product" Id="{d36bb23c-9ca8-0a0d-0050-acea719bb1a0}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION RMatrix_Vector3_Product
+VAR_IN_OUT CONSTANT
+    A : RMatrix;
+    B : Vector3;
+END_VAR
+VAR_IN_OUT
+    Res : Vector3;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[// Complexity : 9M+6A
+Res.SetI(0, A.Data[0]*B.Data[0] + A.Data[1]*B.Data[1] + A.Data[2]*B.Data[2]);
+Res.SetI(1, A.Data[3]*B.Data[0] + A.Data[4]*B.Data[1] + A.Data[5]*B.Data[2]);
+Res.SetI(2, A.Data[6]*B.Data[0] + A.Data[7]*B.Data[1] + A.Data[8]*B.Data[2]);]]></ST>
+    </Implementation>
+  </POU>
+</TcPlcObject>

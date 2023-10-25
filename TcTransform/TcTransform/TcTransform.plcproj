@@ -103,6 +103,9 @@
     <Compile Include="POUs\Functions\RMatrix_Product.TcPOU">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="POUs\Functions\RMatrix_Vector3_Product.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="POUs\Functions\Vector3_CrossProduct.TcPOU">
       <SubType>Code</SubType>
     </Compile>
