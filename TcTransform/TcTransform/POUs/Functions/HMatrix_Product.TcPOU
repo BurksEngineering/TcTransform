@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="HMatrix_Product" Id="{afc324f5-d5f2-0393-3f8c-2ac4344d88f9}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION HMatrix_Product
+VAR_IN_OUT CONSTANT
+    A : HMatrix;
+    B : HMatrix;
+END_VAR
+VAR_IN_OUT
+    Res : HMatrix;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[// Complexity : 36M+36A
+// Rotation = A.Rot * B.rot
+Res.SetI(0,  A.Data[0]*B.Data[0]+A.Data[1]*B.Data[4]+A.Data[2]*B.Data[8]);
+Res.SetI(1,  A.Data[0]*B.Data[1]+A.Data[1]*B.Data[5]+A.Data[2]*B.Data[9]);
+Res.SetI(2,  A.Data[0]*B.Data[2]+A.Data[1]*B.Data[6]+A.Data[2]*B.Data[10]);
+Res.SetI(4,  A.Data[4]*B.Data[0]+A.Data[5]*B.Data[4]+A.Data[6]*B.Data[8]);
+Res.SetI(5,  A.Data[4]*B.Data[1]+A.Data[5]*B.Data[5]+A.Data[6]*B.Data[9]);
+Res.SetI(6,  A.Data[4]*B.Data[2]+A.Data[5]*B.Data[6]+A.Data[6]*B.Data[10]);
+Res.SetI(8,  A.Data[8]*B.Data[0]+A.Data[9]*B.Data[4]+A.Data[10]*B.Data[8]);
+Res.SetI(9,  A.Data[8]*B.Data[1]+A.Data[9]*B.Data[5]+A.Data[10]*B.Data[9]);
+Res.SetI(10, A.Data[8]*B.Data[2]+A.Data[9]*B.Data[6]+A.Data[10]*B.Data[10]);
+
+// Position = A.Rot*B.Pos+A.Pos
+Res.SetI(3,  A.Data[0]*B.Data[3] + A.Data[1]*B.Data[7] + A.Data[2]*B.Data[11]    + A.Data[3]);
+Res.SetI(7,  A.Data[4]*B.Data[3] + A.Data[5]*B.Data[7] + A.Data[6]*B.Data[11]    + A.Data[7]);
+Res.SetI(11, A.Data[8]*B.Data[3] + A.Data[9]*B.Data[7] + A.Data[10]*B.Data[11]   + A.Data[11]);]]></ST>
+    </Implementation>
+  </POU>
+</TcPlcObject>
