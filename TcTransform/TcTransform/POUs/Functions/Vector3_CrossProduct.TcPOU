@@ -14,9 +14,9 @@ VAR_IN_OUT
 END_VAR]]></Declaration>
     <Implementation>
       <ST><![CDATA[// Complexity : 6M+3A
-Res.SetI(0, A.GetI(1)*B.GetI(2) - A.GetI(2)*B.GetI(1));
-Res.SetI(1, A.GetI(2)*B.GetI(0) - A.GetI(0)*B.GetI(2));
-Res.SetI(2, A.GetI(0)*B.GetI(1) - A.GetI(1)*B.GetI(0));]]></ST>
+Res.SetI(0, A.Data[1]*B.Data[2] - A.Data[2]*B.Data[1]);
+Res.SetI(1, A.Data[2]*B.Data[0] - A.Data[0]*B.Data[2]);
+Res.SetI(2, A.Data[0]*B.Data[1] - A.Data[1]*B.Data[0]);]]></ST>
     </Implementation>
     <LineIds Name="Vector3_CrossProduct">
       <LineId Id="30" Count="2" />

@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="RMatrix_Product" Id="{e024edc4-b37a-07c3-3ffa-910bcca1ff49}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION RMatrix_Product
+VAR_IN_OUT CONSTANT
+    A : RMatrix;
+    B : RMatrix;
+END_VAR
+VAR_IN_OUT
+    Res : RMatrix;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[// Complexity : 27M+27A
+Res.SetI(0, A.Data[0]*B.Data[0]+A.Data[1]*B.Data[3]+A.Data[2]*B.Data[6]);
+Res.SetI(1, A.Data[0]*B.Data[1]+A.Data[1]*B.Data[4]+A.Data[2]*B.Data[7]);
+Res.SetI(2, A.Data[0]*B.Data[2]+A.Data[1]*B.Data[5]+A.Data[2]*B.Data[8]);
+Res.SetI(3, A.Data[3]*B.Data[0]+A.Data[4]*B.Data[3]+A.Data[5]*B.Data[6]);
+Res.SetI(4, A.Data[3]*B.Data[1]+A.Data[4]*B.Data[4]+A.Data[5]*B.Data[7]);
+Res.SetI(5, A.Data[3]*B.Data[2]+A.Data[4]*B.Data[5]+A.Data[5]*B.Data[8]);
+Res.SetI(6, A.Data[6]*B.Data[0]+A.Data[7]*B.Data[3]+A.Data[8]*B.Data[6]);
+Res.SetI(7, A.Data[6]*B.Data[1]+A.Data[7]*B.Data[4]+A.Data[8]*B.Data[7]);
+Res.SetI(8, A.Data[6]*B.Data[2]+A.Data[7]*B.Data[5]+A.Data[8]*B.Data[8]);]]></ST>
+    </Implementation>
+  </POU>
+</TcPlcObject>

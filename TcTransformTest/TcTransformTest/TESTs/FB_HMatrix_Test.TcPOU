@@ -13,7 +13,8 @@ END_VAR
       <ST><![CDATA[WhenSetFromComponentsExpectValuesRetained();
 WhenTransformedByIdentityExpectSame();
 WhenVectorTransformedExpectResult();
-WhenMatrixTransformedExpectResult();]]></ST>
+WhenMatrixTransformedExpectResult();
+WhenPostMultipliedByHMatrixExpectResult();]]></ST>
     </Implementation>
     <Method Name="WhenMatrixTransformedExpectResult" Id="{b9562da0-add4-4fb7-aadc-2b99f713b825}">
       <Declaration><![CDATA[METHOD PRIVATE WhenMatrixTransformedExpectResult
@@ -48,6 +49,69 @@ V4.SetFromComponents(0,0,-1);
 AssertTrue(V3.IsNearlyEqual(V4,1E-6),'Result is not correct');
 
 TEST_FINISHED();]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="WhenPostMultipliedByHMatrixExpectResult" Id="{a46c62cc-74f9-0a7e-1db0-1dd23ea57a7f}">
+      <Declaration><![CDATA[METHOD WhenPostMultipliedByHMatrixExpectResult
+VAR_INPUT
+END_VAR
+VAR
+	H1 : HMatrix;
+	H2 : HMatrix;
+    H3 : HMatrix;
+
+    R1 : RMatrix;
+    R2 : RMatrix;
+
+    V1 : Vector3;
+    V2 : Vector3;
+
+    Delta : LREAL := 1E-09;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[TEST('WhenPostMultipliedByHMatrixExpectResult');
+
+// @TEST-RUN
+R1.SetFromAngle(-PI/3,0);
+R1.SetFromAngle( PI/5,1);
+R1.SetFromAngle(-PI/6,2);
+V1.SetI(0, -3);
+V1.SetI(1, 7.5);
+V1.SetI(2, -0.6);
+
+R2.SetFromAngle(PI/7,0);
+R2.SetFromAngle(-PI/3,1);
+R2.SetFromAngle(PI/5,2);
+V2.SetI(0, 15.1);
+V2.SetI(1, -0.34);
+V2.SetI(2, 5.75);
+
+H1.SetFromComponents(R1, V1);
+H2.SetFromComponents(R2, V2);
+
+HMatrix_Product(H1, H2, H3);
+
+// @TEST-ASSERT
+AssertEquals_LREAL(0.99452189536827339586,  H3.GetI(0), Delta, 'H1*H2 is not correct');
+AssertEquals_LREAL(-0.10452846326765348803, H3.GetI(1), Delta, 'H1*H2 is not correct');
+AssertEquals_LREAL(0,                       H3.GetI(2), Delta, 'H1*H2 is not correct');
+AssertEquals_LREAL(9.90698359714502437,     H3.GetI(3), Delta, 'H1*H2 is not correct');
+AssertEquals_LREAL(0.10452846326765348803,  H3.GetI(4), Delta, 'H1*H2 is not correct');
+AssertEquals_LREAL(0.99452189536827339586,  H3.GetI(5), Delta, 'H1*H2 is not correct');
+AssertEquals_LREAL(0,                       H3.GetI(6), Delta, 'H1*H2 is not correct');
+AssertEquals_LREAL(-0.344448637286709158,   H3.GetI(7), Delta, 'H1*H2 is not correct');
+AssertEquals_LREAL(0,                       H3.GetI(8), Delta, 'H1*H2 is not correct');
+AssertEquals_LREAL(0,                       H3.GetI(9), Delta, 'H1*H2 is not correct');
+AssertEquals_LREAL(1,                       H3.GetI(10), Delta, 'H1*H2 is not correct');
+AssertEquals_LREAL(5.15,                    H3.GetI(11), Delta, 'H1*H2 is not correct');
+AssertEquals_LREAL(0,                       H3.GetI(12), Delta, 'H1*H2 is not correct');
+AssertEquals_LREAL(0,                       H3.GetI(13), Delta, 'H1*H2 is not correct');
+AssertEquals_LREAL(0,                       H3.GetI(14), Delta, 'H1*H2 is not correct');
+AssertEquals_LREAL(1,                       H3.GetI(15), Delta, 'H1*H2 is not correct');
+
+TEST_FINISHED();
+]]></ST>
       </Implementation>
     </Method>
     <Method Name="WhenSetFromComponentsExpectValuesRetained" Id="{09201a71-edee-42bf-896b-1afd1555a103}">
